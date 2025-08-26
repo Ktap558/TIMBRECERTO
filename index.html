@@ -645,12 +645,11 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script type="module">
-        // Import Firebase modules
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
-
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
+    
+    <script>
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBDVBhJhcpyy756a-ONHa1SF2XaZQ0xLhg",
@@ -663,23 +662,13 @@
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const analytics = getAnalytics(app);
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const analytics = firebase.analytics();
 
-        // Global variables
-        window.db = db;
-        window.collection = collection;
-        window.addDoc = addDoc;
-        window.getDocs = getDocs;
-        window.doc = doc;
-        window.updateDoc = updateDoc;
-        window.deleteDoc = deleteDoc;
-        window.onSnapshot = onSnapshot;
-
-        // Initialize app
+        // Initialize app when page loads
         window.addEventListener('load', () => {
-            initializeApp();
+            initializeTimbreCerto();
         });
     </script>
 
@@ -692,7 +681,7 @@
         let tonesData = {};
 
         // Initialize the application
-        async function initializeApp() {
+        async function initializeTimbreCerto() {
             try {
                 showLoading(true);
                 await loadAllData();
@@ -709,14 +698,14 @@
         async function loadAllData() {
             try {
                 // Load brands
-                const brandsSnapshot = await getDocs(collection(db, 'brands'));
+                const brandsSnapshot = await db.collection('brands').get();
                 brandsData = {};
                 brandsSnapshot.forEach((doc) => {
                     brandsData[doc.id] = { id: doc.id, ...doc.data() };
                 });
 
                 // Load models
-                const modelsSnapshot = await getDocs(collection(db, 'models'));
+                const modelsSnapshot = await db.collection('models').get();
                 modelsData = {};
                 modelsSnapshot.forEach((doc) => {
                     const data = doc.data();
@@ -727,7 +716,7 @@
                 });
 
                 // Load tones
-                const tonesSnapshot = await getDocs(collection(db, 'tones'));
+                const tonesSnapshot = await db.collection('tones').get();
                 tonesData = {};
                 tonesSnapshot.forEach((doc) => {
                     tonesData[doc.id] = { id: doc.id, ...doc.data() };
@@ -759,7 +748,7 @@
 
                 // Add brands to Firebase
                 for (const brand of defaultBrands) {
-                    const docRef = await addDoc(collection(db, 'brands'), brand);
+                    const docRef = await db.collection('brands').add(brand);
                     brandsData[docRef.id] = { id: docRef.id, ...brand };
                 }
 
@@ -776,7 +765,7 @@
 
                 // Add models to Firebase
                 for (const model of defaultModels) {
-                    const docRef = await addDoc(collection(db, 'models'), model);
+                    const docRef = await db.collection('models').add(model);
                     if (!modelsData[model.brandId]) {
                         modelsData[model.brandId] = [];
                     }
@@ -795,7 +784,7 @@
 
                 // Add tones to Firebase
                 for (const tone of defaultTones) {
-                    const docRef = await addDoc(collection(db, 'tones'), tone);
+                    const docRef = await db.collection('tones').add(tone);
                     tonesData[docRef.id] = { id: docRef.id, ...tone };
                 }
 
@@ -894,7 +883,7 @@
             const brand = brandsData[currentBrand];
             const modelInfo = `${brand ? brand.name : 'Marca'} ${currentModel}`;
             const message = `👋 Olá! Tenho interesse no timbre *${toneName}* para a pedaleira *${modelInfo}*. Como posso liberar o acesso?`;
-            const whatsappUrl = `https://wa.me/5597984582107?text=${encodeURIComponent(message)}`;
+            const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         }
 
@@ -1067,7 +1056,7 @@
                 btn.disabled = true;
                 btn.textContent = 'Adicionando...';
                 
-                const docRef = await addDoc(collection(db, 'brands'), {
+                const docRef = await db.collection('brands').add({
                     name: name,
                     icon: icon
                 });
@@ -1105,7 +1094,7 @@
                 btn.disabled = true;
                 btn.textContent = 'Adicionando...';
                 
-                const docRef = await addDoc(collection(db, 'models'), {
+                const docRef = await db.collection('models').add({
                     brandId: brandId,
                     name: name,
                     modelId: modelId
@@ -1148,7 +1137,7 @@
                 btn.disabled = true;
                 btn.textContent = 'Adicionando...';
                 
-                const docRef = await addDoc(collection(db, 'tones'), {
+                const docRef = await db.collection('tones').add({
                     name: name,
                     description: description,
                     price: price
@@ -1183,7 +1172,7 @@
             }
             
             try {
-                await updateDoc(doc(db, 'tones', toneId), {
+                await db.collection('tones').doc(toneId).update({
                     name: newName,
                     description: newDesc,
                     price: newPrice
@@ -1205,13 +1194,13 @@
                     // Delete all models of this brand first
                     if (modelsData[brandId]) {
                         for (const model of modelsData[brandId]) {
-                            await deleteDoc(doc(db, 'models', model.id));
+                            await db.collection('models').doc(model.id).delete();
                         }
                         delete modelsData[brandId];
                     }
                     
                     // Delete the brand
-                    await deleteDoc(doc(db, 'brands', brandId));
+                    await db.collection('brands').doc(brandId).delete();
                     delete brandsData[brandId];
                     
                     loadBrandsList();
@@ -1228,7 +1217,7 @@
         async function deleteModel(modelId) {
             if (confirm('Tem certeza que deseja excluir este modelo?')) {
                 try {
-                    await deleteDoc(doc(db, 'models', modelId));
+                    await db.collection('models').doc(modelId).delete();
                     
                     // Remove from local data
                     Object.keys(modelsData).forEach(brandId => {
@@ -1249,7 +1238,7 @@
         async function deleteTone(toneId) {
             if (confirm('Tem certeza que deseja excluir este timbre?')) {
                 try {
-                    await deleteDoc(doc(db, 'tones', toneId));
+                    await db.collection('tones').doc(toneId).delete();
                     delete tonesData[toneId];
                     
                     loadTonesList();
@@ -1276,5 +1265,5 @@
             });
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9752792f6038bcd7',t:'MTc1NjIwMjMzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975302c14193d94e',t:'MTc1NjIwNzk2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
