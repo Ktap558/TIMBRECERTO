@@ -1,2470 +1,1280 @@
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estudo+ Fácil - Seu Planner Escolar</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCsIDy5vZfKn0-mqb24XIP0s43C5M_KkUM",
-            authDomain: "estudomais-da927.firebaseapp.com",
-            projectId: "estudomais-da927",
-            storageBucket: "estudomais-da927.firebasestorage.app",
-            messagingSenderId: "461170190310",
-            appId: "1:461170190310:web:d727cbbedce3397e3a1827",
-            measurementId: "G-RL599YX1DL"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const analytics = getAnalytics(app);
-
-        // Make Firebase available globally
-        window.firebaseApp = app;
-        window.firebaseDb = db;
-        window.firebaseAuth = auth;
-        window.firebaseAnalytics = analytics;
-        
-        // Firebase functions
-        window.firebaseFunctions = {
-            addDoc,
-            getDocs,
-            updateDoc,
-            deleteDoc,
-            doc,
-            collection,
-            onSnapshot,
-            query,
-            orderBy,
-            limit,
-            signInAnonymously,
-            onAuthStateChanged
-        };
-
-        // Make auth functions available globally
-        window.firebaseAuthFunctions = {
-            createUserWithEmailAndPassword,
-            signInWithEmailAndPassword,
-            signOut,
-            onAuthStateChanged,
-            updateProfile
-        };
-
-        // Don't auto-login, wait for user action
-        console.log('🔥 Firebase inicializado, aguardando login...');
-    </script>
+    <title>Timbre Certo</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
         
         * {
-            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
         }
         
-        .tech-font {
-            font-family: 'JetBrains Mono', monospace;
+        body { 
+            margin: 0; 
+            font-family: 'Rajdhani', sans-serif; 
+            background: #0a0a0a;
+            color: #f0f0f0; 
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
         
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .tech-gradient {
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
-        }
-        
-        .neon-glow {
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5), 0 0 40px rgba(102, 126, 234, 0.3);
-        }
-        
-        .card-shadow {
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        
-        .subject-math { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
-        .subject-portuguese { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
-        .subject-science { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
-        .subject-history { background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); }
-        .subject-english { background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); }
-        .subject-pe { background: linear-gradient(135deg, #fdbb2d 0%, #22c1c3 100%); }
-        
-        .priority-high { border-left: 4px solid #ef4444; }
-        .priority-medium { border-left: 4px solid #f59e0b; }
-        .priority-low { border-left: 4px solid #10b981; }
-        
-        .achievement-badge {
-            animation: bounce 2s infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-        
-        .mood-emoji {
-            font-size: 2rem;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .mood-emoji:hover {
-            transform: scale(1.2);
-        }
-        
-        .notification {
-            animation: slideIn 0.5s ease-out;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        /* Tech Opening Animations */
-        .tech-opening {
+        body::before {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-image: 
+                linear-gradient(90deg, rgba(255, 152, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(255, 152, 0, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: -1;
         }
         
-        .matrix-bg {
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 85%, rgba(255, 152, 0, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 15%, rgba(255, 152, 0, 0.05) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        header { 
+            background: linear-gradient(135deg, #111111 0%, #1e1e1e 50%, #2a2a2a 100%);
+            padding: 25px; 
+            text-align: center; 
+            font-family: 'Orbitron', monospace;
+            font-size: 2.8em; 
+            font-weight: 900;
+            color: #ff9800;
+            border-bottom: 3px solid #ff9800;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+        }
+        
+        header::before {
+            content: '01001000 01100101 01101100 01101100 01101111';
+            position: absolute;
+            top: 5px;
+            right: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: rgba(255, 152, 0, 0.3);
+            animation: matrix-flow 8s linear infinite;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff9800, transparent);
+            animation: progress-scan 2s ease-in-out infinite;
+        }
+        
+        @keyframes matrix-flow {
+            0% { transform: translateX(100px); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(-100px); opacity: 0; }
+        }
+        
+        @keyframes progress-scan {
+            0%, 100% { transform: scaleX(0); }
+            50% { transform: scaleX(1); }
+        }
+        
+        .container { 
+            padding: 25px; 
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .card { 
+            background: linear-gradient(145deg, #111111, #1e1e1e);
+            margin: 15px 0; 
+            padding: 25px; 
+            border-radius: 0px; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #333333;
+            border-left: 4px solid #ff9800;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #ff9800, transparent);
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+        
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #ff9800, transparent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .card:hover { 
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            transform: translateY(-3px) translateX(3px);
+            border-color: #ff9800;
+            box-shadow: 
+                -5px 5px 15px rgba(0, 0, 0, 0.7),
+                0 0 0 1px rgba(255, 152, 0, 0.3);
+        }
+        
+        button { 
+            padding: 14px 25px; 
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: #000000; 
+            border: 2px solid #ff9800; 
+            border-radius: 0px; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+        
+        button::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
         }
         
-        .matrix-char {
-            position: absolute;
-            color: #00ff41;
+        button:hover::before {
+            transform: translateX(100%);
+        }
+        
+        button:hover { 
+            background: linear-gradient(135deg, #f57c00, #e65100);
+            transform: translateX(3px);
+            box-shadow: -3px 3px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 18px 25px;
+            margin: 30px 0;
+            background: linear-gradient(145deg, #0a0a0a, #1a1a1a);
+            border: 2px solid #333333;
+            border-left: 4px solid #ff9800;
+            border-radius: 0px;
+            color: #f0f0f0;
+            font-size: 18px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            animation: matrix-fall linear infinite;
-            opacity: 0.7;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
         }
         
-        @keyframes matrix-fall {
-            0% { transform: translateY(-100vh); opacity: 1; }
-            100% { transform: translateY(100vh); opacity: 0; }
+        .search-bar:focus {
+            outline: none;
+            border-color: #ff9800;
+            background: linear-gradient(145deg, #111111, #222222);
+            transform: translateX(2px);
         }
         
-        .glitch {
-            animation: glitch 2s infinite;
+        .search-bar::placeholder {
+            color: rgba(255, 152, 0, 0.5);
+            font-style: italic;
         }
         
-        @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            10% { transform: translate(-2px, 2px); }
-            20% { transform: translate(2px, -2px); }
-            30% { transform: translate(-2px, -2px); }
-            40% { transform: translate(2px, 2px); }
-            50% { transform: translate(-2px, 2px); }
-            60% { transform: translate(2px, -2px); }
-            70% { transform: translate(-2px, -2px); }
-            80% { transform: translate(2px, 2px); }
-            90% { transform: translate(-2px, 2px); }
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
         }
         
-        .typing-animation {
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .tone-list {
+            margin: 30px 0;
+        }
+        
+        .tone-item {
+            background: linear-gradient(145deg, #1e1e1e, #2c2c2c);
+            margin: 15px 0;
+            padding: 25px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 152, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
             overflow: hidden;
-            border-right: 3px solid #00ff41;
-            white-space: nowrap;
-            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
         }
         
-        @keyframes typing {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-        
-        @keyframes blink-caret {
-            from, to { border-color: transparent; }
-            50% { border-color: #00ff41; }
-        }
-        
-        .pulse-glow {
-            animation: pulse-glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes pulse-glow {
-            from { box-shadow: 0 0 20px rgba(0, 255, 65, 0.5); }
-            to { box-shadow: 0 0 40px rgba(0, 255, 65, 0.8), 0 0 60px rgba(0, 255, 65, 0.6); }
-        }
-        
-        .circuit-line {
+        .tone-item::before {
+            content: '';
             position: absolute;
-            background: linear-gradient(90deg, transparent, #00ff41, transparent);
-            height: 2px;
-            animation: circuit-flow 3s linear infinite;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #ff9800, #f57c00);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
         }
         
-        @keyframes circuit-flow {
-            0% { width: 0%; opacity: 0; }
-            50% { opacity: 1; }
-            100% { width: 100%; opacity: 0; }
+        .tone-item:hover::before {
+            transform: scaleY(1);
         }
         
-        .fade-out {
-            animation: fadeOut 1s ease-out forwards;
+        .tone-item:hover {
+            border-color: rgba(255, 152, 0, 0.5);
+            box-shadow: 0 5px 20px rgba(255, 152, 0, 0.1);
         }
         
-        @keyframes fadeOut {
-            to { opacity: 0; visibility: hidden; }
+        .tone-info h3 {
+            margin: 0 0 8px 0;
+            color: #ff9800;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 20px;
         }
         
-        .slide-up {
-            animation: slideUp 0.8s ease-out forwards;
+        .tone-info p {
+            margin: 0 0 12px 0;
+            color: #ccc;
+            font-size: 16px;
+            line-height: 1.4;
         }
         
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .price {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: #000000;
+            padding: 10px 20px;
+            border-radius: 0px;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            border: 2px solid #ff9800;
+            clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+            letter-spacing: 1px;
         }
         
-        .scale-in {
-            animation: scaleIn 0.6s ease-out forwards;
+        .back-btn {
+            background: linear-gradient(135deg, #555, #666);
+            margin-bottom: 25px;
         }
         
-        @keyframes scaleIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        .back-btn:hover {
+            background: linear-gradient(135deg, #666, #777);
+            box-shadow: 0 5px 15px rgba(85, 85, 85, 0.4);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+        
+        .admin-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(145deg, #1e1e1e, #2c2c2c);
+            padding: 35px;
+            border-radius: 15px;
+            min-width: 350px;
+            border: 2px solid rgba(255, 152, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+        }
+        
+        .admin-input {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 12px 0;
+            background: linear-gradient(145deg, #0a0a0a, #1c1c1c);
+            border: 1px solid rgba(255, 152, 0, 0.3);
+            border-radius: 8px;
+            color: #f0f0f0;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-input:focus {
+            outline: none;
+            border-color: #ff9800;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.2);
+        }
+        
+        .footer {
+            margin-top: 60px;
+            padding: 25px;
+            border-top: 2px solid rgba(255, 152, 0, 0.2);
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+        }
+        
+        .admin-trigger {
+            opacity: 0.3;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', monospace;
+            font-size: 16px;
+            color: #ff9800;
+            padding: 5px 10px;
+            border: 1px solid transparent;
+        }
+        
+        .admin-trigger:hover {
+            opacity: 1;
+            border-color: #ff9800;
+            background: rgba(255, 152, 0, 0.1);
+        }
+        
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25d366, #1da851);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        
+        .whatsapp-btn:hover {
+            background: linear-gradient(135deg, #1da851, #128c3e);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        }
+        
+        .brand-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            border-radius: 0px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 28px;
+            margin: 0 auto 15px;
+            font-family: 'Orbitron', monospace;
+            color: #000000;
+            border: 3px solid #ff9800;
+            transition: all 0.3s ease;
+            clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+            position: relative;
+        }
+        
+        .brand-icon::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 15px;
+            height: 15px;
+            background: #ff9800;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+        
+        .card:hover .brand-icon {
+            transform: scale(1.05) rotate(2deg);
+            background: linear-gradient(135deg, #f57c00, #e65100);
+        }
+        
+        .tone-count {
+            color: #ff9800;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        h2 {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: #ff9800;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #ff9800;
+        }
+        
+        h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #ff9800;
+            font-family: 'Orbitron', monospace;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: loading-dots 1.5s infinite;
+        }
+        
+        @keyframes loading-dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        
+        .error {
+            background: rgba(211, 47, 47, 0.1);
+            border: 1px solid #d32f2f;
+            color: #ff6b6b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .success {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid #4caf50;
+            color: #81c784;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Login Screen -->
-    <div id="login-screen" class="tech-opening tech-gradient">
-        <!-- Matrix Background -->
-        <div class="matrix-bg" id="login-matrix-bg"></div>
+<body>
+    <header>
+        🎸 Timbre Certo
+    </header>
+
+    <div class="container">
+        <input 
+            type="text" 
+            placeholder="Buscar pedaleira ou modelo..."
+            class="search-bar"
+            id="searchInput"
+            oninput="filterContent()"
+        >
         
-        <!-- Circuit Lines -->
-        <div class="circuit-line" style="top: 20%; left: 0; animation-delay: 0s;"></div>
-        <div class="circuit-line" style="top: 40%; right: 0; animation-delay: 1s;"></div>
-        <div class="circuit-line" style="top: 60%; left: 0; animation-delay: 2s;"></div>
-        <div class="circuit-line" style="top: 80%; right: 0; animation-delay: 3s;"></div>
-        
-        <!-- Login Content -->
-        <div class="relative z-10 text-center max-w-md mx-auto px-6">
-            <!-- Logo -->
-            <div class="mb-8">
-                <div class="inline-block p-6 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 neon-glow pulse-glow">
-                    <div class="text-6xl">🎓</div>
-                </div>
-            </div>
-            
-            <!-- Title -->
-            <div class="mb-8">
-                <h1 class="text-4xl md:text-5xl font-bold text-white glitch mb-4">
-                    <span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
-                        Estudo+ Fácil
-                    </span>
-                </h1>
-                <div class="text-lg text-cyan-300 tech-font">
-                    Faça login para continuar
-                </div>
-            </div>
-            
-            <!-- Login/Register Form -->
-            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-cyan-500/30 mb-6">
-                <!-- Form Toggle -->
-                <div class="flex mb-6">
-                    <button type="button" id="login-tab" onclick="showLoginForm()" 
-                            class="flex-1 py-2 px-4 text-center font-medium rounded-l-lg bg-cyan-500/30 text-cyan-200 border-r border-cyan-400/30">
-                        🔑 Entrar
-                    </button>
-                    <button type="button" id="register-tab" onclick="showRegisterForm()" 
-                            class="flex-1 py-2 px-4 text-center font-medium rounded-r-lg bg-white/10 text-cyan-300 hover:bg-white/20">
-                        📝 Cadastrar
-                    </button>
-                </div>
-
-                <!-- Login Form -->
-                <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-cyan-200 text-sm font-medium mb-2">Email</label>
-                        <input type="email" id="login-email" required 
-                               class="w-full p-3 bg-white/20 border border-cyan-500/50 rounded-lg text-white placeholder-cyan-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50 focus:outline-none"
-                               placeholder="seu@email.com">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-cyan-200 text-sm font-medium mb-2">Senha</label>
-                        <input type="password" id="login-password" required 
-                               class="w-full p-3 bg-white/20 border border-cyan-500/50 rounded-lg text-white placeholder-cyan-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50 focus:outline-none"
-                               placeholder="Digite sua senha">
-                    </div>
-                    
-                    <button type="submit" 
-                            class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold py-3 rounded-lg hover:from-cyan-400 hover:to-blue-500 transition-all duration-300 transform hover:scale-105 neon-glow">
-                        🚀 Entrar
-                    </button>
-                </form>
-
-                <!-- Register Form -->
-                <form id="register-form" onsubmit="handleRegister(event)" class="space-y-4 hidden">
-                    <div>
-                        <label class="block text-cyan-200 text-sm font-medium mb-2">Nome Completo</label>
-                        <input type="text" id="register-name" required 
-                               class="w-full p-3 bg-white/20 border border-cyan-500/50 rounded-lg text-white placeholder-cyan-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50 focus:outline-none"
-                               placeholder="Seu nome completo">
-                    </div>
-
-                    <div>
-                        <label class="block text-cyan-200 text-sm font-medium mb-2">Email</label>
-                        <input type="email" id="register-email" required 
-                               class="w-full p-3 bg-white/20 border border-cyan-500/50 rounded-lg text-white placeholder-cyan-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50 focus:outline-none"
-                               placeholder="seu@email.com">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-cyan-200 text-sm font-medium mb-2">Senha</label>
-                        <input type="password" id="register-password" required minlength="6"
-                               class="w-full p-3 bg-white/20 border border-cyan-500/50 rounded-lg text-white placeholder-cyan-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50 focus:outline-none"
-                               placeholder="Mínimo 6 caracteres">
-                    </div>
-
-                    <div>
-                        <label class="block text-cyan-200 text-sm font-medium mb-2">Confirmar Senha</label>
-                        <input type="password" id="register-confirm-password" required minlength="6"
-                               class="w-full p-3 bg-white/20 border border-cyan-500/50 rounded-lg text-white placeholder-cyan-300 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50 focus:outline-none"
-                               placeholder="Digite a senha novamente">
-                    </div>
-                    
-                    <button type="submit" 
-                            class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 rounded-lg hover:from-green-400 hover:to-emerald-500 transition-all duration-300 transform hover:scale-105 neon-glow">
-                        ✨ Criar Conta
-                    </button>
-                </form>
-                
-            </div>
-            
-            <!-- Info -->
-            <div class="text-xs text-cyan-400 opacity-75">
-                💡 <span id="form-info">Entre com seu email e senha ou crie uma nova conta</span>
-            </div>
+        <!-- Loading State -->
+        <div id="loadingState" class="loading">
+            Carregando dados
         </div>
+        
+        <!-- Brands Section -->
+        <section id="brandsSection" class="hidden">
+            <h2 style="text-align: center; margin: 30px 0;">Escolha sua Marca de Pedaleira</h2>
+            <div class="brand-grid" id="brandGrid">
+                <!-- Brands will be populated here -->
+            </div>
+        </section>
+
+        <!-- Models Section -->
+        <section id="modelsSection" class="hidden">
+            <button onclick="showBrands()" class="back-btn">← Voltar</button>
+            <h2>Modelos <span id="brandName"></span></h2>
+            <div id="modelsList" class="model-grid">
+                <!-- Models will be populated here -->
+            </div>
+        </section>
+
+        <!-- Tones Section -->
+        <section id="tonesSection" class="hidden">
+            <button onclick="goBack()" class="back-btn">← Voltar</button>
+            <h2>Timbres Disponíveis</h2>
+            <p id="modelInfo" style="color: #ccc; margin-bottom: 20px;"></p>
+            <div id="tonesList" class="tone-list">
+                <!-- Tones will be populated here -->
+            </div>
+        </section>
     </div>
 
-    <!-- Tech Opening Screen -->
-    <div id="tech-opening" class="tech-opening tech-gradient hidden">
-        <!-- Matrix Background -->
-        <div class="matrix-bg" id="matrix-bg"></div>
-        
-        <!-- Circuit Lines -->
-        <div class="circuit-line" style="top: 20%; left: 0; animation-delay: 0s;"></div>
-        <div class="circuit-line" style="top: 40%; right: 0; animation-delay: 1s;"></div>
-        <div class="circuit-line" style="top: 60%; left: 0; animation-delay: 2s;"></div>
-        <div class="circuit-line" style="top: 80%; right: 0; animation-delay: 3s;"></div>
-        
-        <!-- Main Content -->
-        <div class="relative z-10 text-center max-w-4xl mx-auto px-6">
-            <!-- Logo/Icon -->
-            <div class="mb-8">
-                <div class="inline-block p-6 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 neon-glow pulse-glow">
-                    <div class="text-6xl">🚀</div>
-                </div>
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Timbre Certo. Todos os direitos reservados.</p>
+        <span class="admin-trigger" onclick="toggleAdmin()">•••</span>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel">
+        <div class="admin-content" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
+            <h3>Painel Administrativo</h3>
+            <div id="loginForm">
+                <input type="password" placeholder="Digite a senha..." class="admin-input" id="adminPassword">
+                <button onclick="adminLogin()">Entrar</button>
+                <button onclick="toggleAdmin()" style="background: #555; margin-left: 10px;">Cancelar</button>
             </div>
             
-            <!-- App Title -->
-            <div class="mb-6">
-                <h1 class="text-6xl md:text-8xl font-bold text-white glitch mb-4">
-                    <span class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
-                        Estudo+
-                    </span>
-                </h1>
-                <div class="text-2xl md:text-3xl font-light text-cyan-300 tech-font typing-animation">
-                    Seu Planner Escolar Inteligente
+            <!-- Admin Menu -->
+            <div id="adminMenu" class="hidden">
+                <button onclick="showAdminSection('brands')" style="width: 100%; margin: 5px 0; background: #007acc;">Gerenciar Marcas</button>
+                <button onclick="showAdminSection('models')" style="width: 100%; margin: 5px 0; background: #7c4dff;">Gerenciar Modelos</button>
+                <button onclick="showAdminSection('tones')" style="width: 100%; margin: 5px 0;">Gerenciar Timbres</button>
+                <button onclick="toggleAdmin()" style="width: 100%; margin: 5px 0; background: #555;">Sair</button>
+            </div>
+
+            <!-- Brands Management -->
+            <div id="adminBrands" class="hidden">
+                <button onclick="showAdminMenu()" class="back-btn" style="margin-bottom: 15px;">← Voltar</button>
+                <h4>Gerenciar Marcas</h4>
+                
+                <div style="margin: 15px 0; padding: 15px; background: #1c1c1c; border-radius: 5px;">
+                    <h5>Adicionar Nova Marca</h5>
+                    <input type="text" placeholder="Nome da marca" class="admin-input" id="newBrandName">
+                    <input type="text" placeholder="Ícone (ex: Z, B, L6)" class="admin-input" id="newBrandIcon">
+                    <button onclick="addBrand()" id="addBrandBtn">Adicionar Marca</button>
+                </div>
+                
+                <div id="brandsList">
+                    <!-- Brands list will be populated here -->
                 </div>
             </div>
-            
-            <!-- Features Preview -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 opacity-0" id="features-grid">
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-cyan-500/30">
-                    <div class="text-2xl mb-2">📅</div>
-                    <div class="text-sm text-cyan-200">Agenda</div>
+
+            <!-- Models Management -->
+            <div id="adminModels" class="hidden">
+                <button onclick="showAdminMenu()" class="back-btn" style="margin-bottom: 15px;">← Voltar</button>
+                <h4>Gerenciar Modelos</h4>
+                
+                <div style="margin: 15px 0; padding: 15px; background: #1c1c1c; border-radius: 5px;">
+                    <h5>Adicionar Novo Modelo</h5>
+                    <select class="admin-input" id="modelBrandSelect">
+                        <option value="">Selecione uma marca</option>
+                    </select>
+                    <input type="text" placeholder="Nome do modelo" class="admin-input" id="newModelName">
+                    <input type="text" placeholder="ID do modelo (ex: g1x)" class="admin-input" id="newModelId">
+                    <button onclick="addModel()" id="addModelBtn">Adicionar Modelo</button>
                 </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-purple-500/30">
-                    <div class="text-2xl mb-2">✅</div>
-                    <div class="text-sm text-purple-200">Tarefas</div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-green-500/30">
-                    <div class="text-2xl mb-2">📊</div>
-                    <div class="text-sm text-green-200">Progresso</div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                    <div class="text-2xl mb-2">💬</div>
-                    <div class="text-sm text-yellow-200">Chat</div>
+                
+                <div id="modelsList">
+                    <!-- Models list will be populated here -->
                 </div>
             </div>
-            
-            <!-- Loading Bar -->
-            <div class="mb-8 opacity-0" id="loading-section">
-                <div class="text-cyan-300 mb-4 tech-font">Inicializando sistema...</div>
-                <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-                    <div id="loading-bar" class="h-full bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+
+            <!-- Tones Management -->
+            <div id="adminTones" class="hidden">
+                <button onclick="showAdminMenu()" class="back-btn" style="margin-bottom: 15px;">← Voltar</button>
+                <h4>Gerenciar Timbres</h4>
+                
+                <div style="margin: 15px 0; padding: 15px; background: #1c1c1c; border-radius: 5px;">
+                    <h5>Adicionar Novo Timbre</h5>
+                    <input type="text" placeholder="Nome do timbre" class="admin-input" id="newToneName">
+                    <input type="text" placeholder="Descrição" class="admin-input" id="newToneDescription">
+                    <input type="text" placeholder="Preço (ex: R$ 15,00)" class="admin-input" id="newTonePrice">
+                    <button onclick="addTone()" id="addToneBtn">Adicionar Timbre</button>
                 </div>
-                <div id="loading-text" class="text-sm text-gray-400 mt-2 tech-font">Carregando módulos...</div>
-            </div>
-            
-            <!-- Enter Button -->
-            <div class="opacity-0" id="enter-section">
-                <button onclick="enterApp()" class="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-white font-semibold text-lg hover:from-cyan-400 hover:to-blue-500 transition-all duration-300 transform hover:scale-105 neon-glow">
-                    <span class="relative z-10">🎯 Entrar no Sistema</span>
-                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </button>
-            </div>
-            
-            <!-- Developer Info -->
-            <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center opacity-0" id="developer-info">
-                <div class="bg-black/30 backdrop-blur-sm rounded-lg p-4 border border-cyan-500/20">
-                    <div class="text-cyan-300 font-semibold tech-font">Desenvolvido por</div>
-                    <div class="text-white text-lg font-bold">Matheus Ivan Rodrigues</div>
-                    <div class="text-gray-400 text-sm tech-font">@2025 • Tecnologia Educacional</div>
+                
+                <div id="tonesListAdmin">
+                    <!-- Tones list will be populated here -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main App Content (Hidden Initially) -->
-    <div id="main-app" class="hidden">
-        <!-- Header -->
-        <header class="gradient-bg text-white p-6 card-shadow">
-            <div class="max-w-6xl mx-auto flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="text-3xl">📚</div>
-                    <h1 class="text-2xl font-bold">Estudo+ Fácil</h1>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div id="firebase-status" class="text-xs bg-white/20 px-2 py-1 rounded-full">
-                        🔄 Conectando...
-                    </div>
-                    <div class="text-sm">Olá, <span id="studentName">Estudante</span>! 😊</div>
-                    <button onclick="showAchievements()" class="bg-white/20 px-4 py-2 rounded-full text-sm hover:bg-white/30 transition-colors">
-                        🏆 Conquistas
-                    </button>
-                    <button onclick="logout()" class="bg-red-500/20 px-4 py-2 rounded-full text-sm hover:bg-red-500/30 transition-colors">
-                        🚪 Sair
-                    </button>
-                </div>
-            </div>
-        </header>
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js';
 
-        <!-- Navigation -->
-        <nav class="bg-white shadow-sm border-b">
-            <div class="max-w-6xl mx-auto px-6">
-                <div class="flex space-x-8">
-                    <button onclick="showSection('schedule')" class="nav-btn py-4 px-2 border-b-2 border-blue-500 text-blue-600 font-medium">
-                        📅 Agenda
-                    </button>
-                    <button onclick="showSection('tasks')" class="nav-btn py-4 px-2 text-gray-500 hover:text-blue-600">
-                        ✅ Tarefas
-                    </button>
-                    <button onclick="showSection('calendar')" class="nav-btn py-4 px-2 text-gray-500 hover:text-blue-600">
-                        📆 Calendário
-                    </button>
-                    <button onclick="showSection('diary')" class="nav-btn py-4 px-2 text-gray-500 hover:text-blue-600">
-                        📖 Diário
-                    </button>
-                    <button onclick="showSection('progress')" class="nav-btn py-4 px-2 text-gray-500 hover:text-blue-600">
-                        📊 Progresso
-                    </button>
-                    <button onclick="showSection('chat')" class="nav-btn py-4 px-2 text-gray-500 hover:text-blue-600">
-                        💬 Chat
-                    </button>
-                </div>
-            </div>
-        </nav>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDVBhJhcpyy756a-ONHa1SF2XaZQ0xLhg",
+            authDomain: "timbre-certo.firebaseapp.com",
+            projectId: "timbre-certo",
+            storageBucket: "timbre-certo.firebasestorage.app",
+            messagingSenderId: "303658016178",
+            appId: "1:303658016178:web:db00bd8e6eb598330a18ab",
+            measurementId: "G-5L6DHD44QP"
+        };
 
-        <!-- Main Content -->
-        <main class="max-w-6xl mx-auto p-6">
-            <!-- Schedule Section -->
-            <div id="schedule-section" class="section">
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 space-y-4 lg:space-y-0">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-800">📅 Agenda Escolar</h2>
-                        <p class="text-gray-600">Organize suas aulas e horários da semana</p>
-                    </div>
-                </div>
-
-                <!-- Quick Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white rounded-lg p-4 card-shadow text-center">
-                        <div class="text-2xl font-bold text-blue-600" id="total-classes">0</div>
-                        <div class="text-sm text-gray-600">Aulas/Semana</div>
-                    </div>
-                    <div class="bg-white rounded-lg p-4 card-shadow text-center">
-                        <div class="text-2xl font-bold text-green-600" id="total-subjects">0</div>
-                        <div class="text-sm text-gray-600">Matérias</div>
-                    </div>
-                    <div class="bg-white rounded-lg p-4 card-shadow text-center">
-                        <div class="text-2xl font-bold text-purple-600" id="busiest-day">-</div>
-                        <div class="text-sm text-gray-600">Dia + Cheio</div>
-                    </div>
-                    <div class="bg-white rounded-lg p-4 card-shadow text-center">
-                        <div class="text-2xl font-bold text-orange-600" id="next-class">-</div>
-                        <div class="text-sm text-gray-600">Próxima Aula</div>
-                    </div>
-                </div>
-
-                <!-- Current Day Highlight -->
-                <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-4 mb-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-lg font-semibold">📚 Hoje é <span id="current-day-name"></span></h3>
-                            <p class="text-blue-100">Suas aulas de hoje:</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-2xl font-bold" id="today-classes-count">0</div>
-                            <div class="text-sm text-blue-100">aulas</div>
-                        </div>
-                    </div>
-                    <div id="today-schedule" class="mt-3 space-y-2">
-                        <!-- Today's classes will be populated here -->
-                    </div>
-                </div>
-
-                <!-- Schedule Grid -->
-                <div class="bg-white rounded-lg card-shadow overflow-hidden">
-                    <div class="p-4 bg-gray-50 border-b">
-                        <h3 class="font-semibold text-gray-800">📋 Grade Horária Semanal</h3>
-                    </div>
-                    
-                    <div id="schedule-container" class="overflow-x-auto">
-                        <div class="grid grid-cols-8 gap-2 p-4 min-w-full" style="min-width: 800px;">
-                            <div class="font-semibold text-center text-gray-600 py-3 bg-gray-100 rounded-lg">⏰ Horário</div>
-                            <div class="font-semibold text-center text-gray-600 py-3 bg-blue-50 rounded-lg">🌅 Segunda</div>
-                            <div class="font-semibold text-center text-gray-600 py-3 bg-green-50 rounded-lg">🌤️ Terça</div>
-                            <div class="font-semibold text-center text-gray-600 py-3 bg-yellow-50 rounded-lg">☀️ Quarta</div>
-                            <div class="font-semibold text-center text-gray-600 py-3 bg-orange-50 rounded-lg">🌅 Quinta</div>
-                            <div class="font-semibold text-center text-gray-600 py-3 bg-red-50 rounded-lg">🎉 Sexta</div>
-                            <div class="font-semibold text-center text-gray-600 py-3 bg-purple-50 rounded-lg">🏖️ Sábado</div>
-                            <div class="font-semibold text-center text-gray-600 py-3 bg-pink-50 rounded-lg">😴 Domingo</div>
-                        </div>
-                        
-                        <div id="schedule-grid" class="grid grid-cols-8 gap-2 p-4 min-w-full" style="min-width: 800px;">
-                            <!-- Schedule will be populated by JavaScript -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tasks Section -->
-            <div id="tasks-section" class="section hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">✅ Lista de Tarefas</h2>
-                    <button onclick="addTask()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
-                        ➕ Nova Tarefa
-                    </button>
-                </div>
-                
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-white rounded-lg p-4 card-shadow">
-                        <h3 class="font-semibold text-red-600 mb-3">🔴 Urgente</h3>
-                        <div id="urgent-tasks" class="space-y-2"></div>
-                    </div>
-                    <div class="bg-white rounded-lg p-4 card-shadow">
-                        <h3 class="font-semibold text-yellow-600 mb-3">🟡 Médio</h3>
-                        <div id="medium-tasks" class="space-y-2"></div>
-                    </div>
-                    <div class="bg-white rounded-lg p-4 card-shadow">
-                        <h3 class="font-semibold text-green-600 mb-3">🟢 Tranquilo</h3>
-                        <div id="low-tasks" class="space-y-2"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Calendar Section -->
-            <div id="calendar-section" class="section hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">📆 Calendário Mensal</h2>
-                    <button onclick="addEvent()" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
-                        ➕ Novo Evento
-                    </button>
-                </div>
-                
-                <div class="bg-white rounded-lg p-6 card-shadow">
-                    <div class="flex justify-between items-center mb-4">
-                        <button onclick="previousMonth()" class="text-2xl hover:bg-gray-100 p-2 rounded">←</button>
-                        <h3 id="current-month" class="text-xl font-semibold"></h3>
-                        <button onclick="nextMonth()" class="text-2xl hover:bg-gray-100 p-2 rounded">→</button>
-                    </div>
-                    <div id="calendar-grid" class="grid grid-cols-7 gap-2"></div>
-                </div>
-            </div>
-
-            <!-- Diary Section -->
-            <div id="diary-section" class="section hidden">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">📖 Diário de Estudos</h2>
-                
-                <div class="bg-white rounded-lg p-6 card-shadow">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Como foi seu dia hoje?</label>
-                        <div class="flex space-x-4 mb-4">
-                            <span class="mood-emoji" onclick="setMood('happy')">😃</span>
-                            <span class="mood-emoji" onclick="setMood('neutral')">😐</span>
-                            <span class="mood-emoji" onclick="setMood('sad')">😞</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">O que você aprendeu hoje?</label>
-                        <textarea id="learning-notes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="4" placeholder="Escreva sobre o que aprendeu hoje..."></textarea>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Dificuldades encontradas:</label>
-                        <textarea id="difficulties" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows="3" placeholder="Quais foram suas dificuldades?"></textarea>
-                    </div>
-                    
-                    <button onclick="saveDiaryEntry()" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                        💾 Salvar Entrada
-                    </button>
-                </div>
-                
-                <div class="mt-6">
-                    <h3 class="text-lg font-semibold mb-4">📝 Entradas Anteriores</h3>
-                    <div id="diary-entries" class="space-y-4"></div>
-                </div>
-            </div>
-
-            <!-- Progress Section -->
-            <div id="progress-section" class="section hidden">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">📊 Relatório de Progresso</h2>
-                
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-lg p-6 card-shadow">
-                        <h3 class="text-lg font-semibold mb-4">📈 Notas por Matéria</h3>
-                        <div id="grades-chart" class="space-y-4"></div>
-                        <button onclick="addGrade()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                            ➕ Adicionar Nota
-                        </button>
-                    </div>
-                    
-                    <div class="bg-white rounded-lg p-6 card-shadow">
-                        <h3 class="text-lg font-semibold mb-4">🏆 Conquistas</h3>
-                        <div id="achievements-list" class="space-y-3"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Section -->
-            <div id="chat-section" class="section hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">💬 Chat dos Estudantes</h2>
-                    <div class="flex space-x-2">
-                        <button onclick="shareProgress()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
-                            📊 Compartilhar Progresso
-                        </button>
-                        <button onclick="shareDiary()" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
-                            📖 Compartilhar Diário
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="grid lg:grid-cols-4 gap-6">
-                    <!-- Online Users -->
-                    <div class="bg-white rounded-lg p-4 card-shadow">
-                        <h3 class="font-semibold text-gray-800 mb-4 flex items-center">
-                            <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                            Online (4)
-                        </h3>
-                        <div id="online-users" class="space-y-2">
-                            <div class="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
-                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">A</div>
-                                <div>
-                                    <div class="font-medium text-sm">Ana Silva</div>
-                                    <div class="text-xs text-gray-500">📚 Estudando</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
-                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm font-bold">B</div>
-                                <div>
-                                    <div class="font-medium text-sm">Bruno Costa</div>
-                                    <div class="text-xs text-gray-500">⏰ Pomodoro</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
-                                <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold">C</div>
-                                <div>
-                                    <div class="font-medium text-sm">Carla Lima</div>
-                                    <div class="text-xs text-gray-500">✅ Fazendo tarefas</div>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-2 p-2 hover:bg-gray-50 rounded">
-                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-sm font-bold">D</div>
-                                <div>
-                                    <div class="font-medium text-sm">Diego Santos</div>
-                                    <div class="text-xs text-gray-500">📝 Revisando</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Chat Messages -->
-                    <div class="lg:col-span-3 bg-white rounded-lg card-shadow flex flex-col h-96">
-                        <div class="p-4 border-b border-gray-200">
-                            <h3 class="font-semibold text-gray-800">💬 Conversa Geral</h3>
-                            <div class="text-sm text-gray-500">Compartilhe seus estudos e motive seus colegas!</div>
-                        </div>
-                        
-                        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4">
-                            <!-- Messages will be populated here -->
-                        </div>
-                        
-                        <div class="p-4 border-t border-gray-200">
-                            <div class="flex space-x-2">
-                                <input type="text" id="chat-input" placeholder="Digite sua mensagem..." 
-                                       class="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                       onkeypress="handleChatKeyPress(event)">
-                                <button onclick="sendMessage()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                                    📤
-                                </button>
-                            </div>
-                            <div class="flex space-x-2 mt-2">
-                                <button onclick="sendEmoji('👍')" class="text-lg hover:bg-gray-100 p-1 rounded">👍</button>
-                                <button onclick="sendEmoji('❤️')" class="text-lg hover:bg-gray-100 p-1 rounded">❤️</button>
-                                <button onclick="sendEmoji('😊')" class="text-lg hover:bg-gray-100 p-1 rounded">😊</button>
-                                <button onclick="sendEmoji('🎉')" class="text-lg hover:bg-gray-100 p-1 rounded">🎉</button>
-                                <button onclick="sendEmoji('📚')" class="text-lg hover:bg-gray-100 p-1 rounded">📚</button>
-                                <button onclick="sendEmoji('💪')" class="text-lg hover:bg-gray-100 p-1 rounded">💪</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Shared Content Feed -->
-                <div class="mt-6">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📋 Compartilhamentos Recentes</h3>
-                    <div id="shared-content" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <!-- Shared content will be populated here -->
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Notification Area -->
-    <div id="notifications" class="fixed top-20 right-4 space-y-2 z-50"></div>
-
-    <!-- Modals -->
-    <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" onclick="closeModal()">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div id="modal-content" class="bg-white rounded-lg p-6 max-w-md w-full" onclick="event.stopPropagation()">
-                <!-- Modal content will be inserted here -->
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Initialize login screen
-        document.addEventListener('DOMContentLoaded', function() {
-            initLoginScreen();
-        });
-
-        function initLoginScreen() {
-            // Create matrix effect for login screen
-            createMatrixEffect('login-matrix-bg');
-        }
-
-        // Form toggle functions
-        function showLoginForm() {
-            document.getElementById('login-form').classList.remove('hidden');
-            document.getElementById('register-form').classList.add('hidden');
-            document.getElementById('login-tab').className = 'flex-1 py-2 px-4 text-center font-medium rounded-l-lg bg-cyan-500/30 text-cyan-200 border-r border-cyan-400/30';
-            document.getElementById('register-tab').className = 'flex-1 py-2 px-4 text-center font-medium rounded-r-lg bg-white/10 text-cyan-300 hover:bg-white/20';
-            document.getElementById('form-info').textContent = 'Entre com seu email e senha';
-        }
-
-        function showRegisterForm() {
-            document.getElementById('login-form').classList.add('hidden');
-            document.getElementById('register-form').classList.remove('hidden');
-            document.getElementById('login-tab').className = 'flex-1 py-2 px-4 text-center font-medium rounded-l-lg bg-white/10 text-cyan-300 hover:bg-white/20 border-r border-cyan-400/30';
-            document.getElementById('register-tab').className = 'flex-1 py-2 px-4 text-center font-medium rounded-r-lg bg-cyan-500/30 text-cyan-200';
-            document.getElementById('form-info').textContent = 'Crie sua conta para começar a usar o sistema';
-        }
-
-        // Login functions
-        function handleLogin(event) {
-            event.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value.trim();
-            
-            if (email && password) {
-                authenticateUser(email, password, false);
-            }
-        }
-
-        function handleRegister(event) {
-            event.preventDefault();
-            const name = document.getElementById('register-name').value.trim();
-            const email = document.getElementById('register-email').value.trim();
-            const password = document.getElementById('register-password').value.trim();
-            const confirmPassword = document.getElementById('register-confirm-password').value.trim();
-            
-            if (password !== confirmPassword) {
-                showNotification('❌ As senhas não coincidem!', 'error');
-                return;
-            }
-            
-            if (name && email && password) {
-                authenticateUser(email, password, true, name);
-            }
-        }
-
-
-
-        function authenticateUser(email, password, isRegistering, displayName = null) {
-            // Show loading state
-            showLoginLoading();
-            
-            const authFunction = isRegistering ? 
-                window.firebaseAuthFunctions.createUserWithEmailAndPassword :
-                window.firebaseAuthFunctions.signInWithEmailAndPassword;
-            
-            authFunction(window.firebaseAuth, email, password)
-                .then(async (userCredential) => {
-                    const user = userCredential.user;
-                    console.log('🔥 Firebase autenticado com sucesso!');
-                    
-                    // Set display name for new users
-                    if (isRegistering && displayName) {
-                        await window.firebaseAuthFunctions.updateProfile(user, {
-                            displayName: displayName
-                        });
-                        currentUser = displayName;
-                    } else {
-                        currentUser = user.displayName || user.email.split('@')[0];
-                    }
-                    
-                    document.getElementById('studentName').textContent = currentUser;
-                    
-                    if (window.initFirebaseData) {
-                        window.initFirebaseData();
-                    }
-                    
-                    // Show success message
-                    const message = isRegistering ? 
-                        '✨ Conta criada com sucesso! Bem-vindo!' : 
-                        '🎉 Login realizado com sucesso!';
-                    showNotification(message, 'success');
-                    
-                    // Proceed to tech opening after successful auth
-                    setTimeout(() => {
-                        document.getElementById('login-screen').style.display = 'none';
-                        document.getElementById('tech-opening').classList.remove('hidden');
-                        initTechOpening();
-                    }, 1500);
-                    
-                })
-                .catch((error) => {
-                    console.error('Erro na autenticação:', error);
-                    hideLoginLoading();
-                    
-                    let errorMessage = 'Erro na autenticação';
-                    switch (error.code) {
-                        case 'auth/email-already-in-use':
-                            errorMessage = '❌ Este email já está em uso!';
-                            break;
-                        case 'auth/weak-password':
-                            errorMessage = '❌ Senha muito fraca! Use pelo menos 6 caracteres.';
-                            break;
-                        case 'auth/user-not-found':
-                            errorMessage = '❌ Usuário não encontrado!';
-                            break;
-                        case 'auth/wrong-password':
-                            errorMessage = '❌ Senha incorreta!';
-                            break;
-                        case 'auth/invalid-email':
-                            errorMessage = '❌ Email inválido!';
-                            break;
-                        case 'auth/too-many-requests':
-                            errorMessage = '❌ Muitas tentativas. Tente novamente mais tarde.';
-                            break;
-                        default:
-                            errorMessage = `❌ ${error.message}`;
-                    }
-                    
-                    showNotification(errorMessage, 'error');
-                });
-        }
-
-        function showLoginLoading() {
-            const loginScreen = document.getElementById('login-screen');
-            const loadingOverlay = document.createElement('div');
-            loadingOverlay.id = 'login-loading';
-            loadingOverlay.className = 'absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-20';
-            loadingOverlay.innerHTML = `
-                <div class="text-center">
-                    <div class="inline-block p-4 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 neon-glow pulse-glow mb-4">
-                        <div class="text-3xl">🔄</div>
-                    </div>
-                    <div class="text-white font-semibold mb-2">Autenticando...</div>
-                    <div class="text-cyan-300 text-sm tech-font">Conectando ao sistema</div>
-                </div>
-            `;
-            loginScreen.appendChild(loadingOverlay);
-        }
-
-        function hideLoginLoading() {
-            const loadingOverlay = document.getElementById('login-loading');
-            if (loadingOverlay) {
-                loadingOverlay.remove();
-            }
-        }
-
-        function initTechOpening() {
-            // Create matrix effect
-            createMatrixEffect();
-            
-            // Animate elements in sequence
-            setTimeout(() => {
-                document.getElementById('features-grid').classList.add('scale-in');
-                document.getElementById('features-grid').style.opacity = '1';
-            }, 2000);
-            
-            setTimeout(() => {
-                document.getElementById('loading-section').classList.add('slide-up');
-                document.getElementById('loading-section').style.opacity = '1';
-                startLoadingAnimation();
-            }, 3000);
-            
-            setTimeout(() => {
-                document.getElementById('developer-info').classList.add('slide-up');
-                document.getElementById('developer-info').style.opacity = '1';
-            }, 4000);
-        }
-
-        function createMatrixEffect(containerId = 'matrix-bg') {
-            const matrixBg = document.getElementById(containerId);
-            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-            
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const char = document.createElement('div');
-                    char.className = 'matrix-char';
-                    char.textContent = chars[Math.floor(Math.random() * chars.length)];
-                    char.style.left = Math.random() * 100 + '%';
-                    char.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                    char.style.animationDelay = Math.random() * 2 + 's';
-                    matrixBg.appendChild(char);
-                    
-                    // Remove after animation
-                    setTimeout(() => {
-                        if (char.parentNode) {
-                            char.parentNode.removeChild(char);
-                        }
-                    }, 5000);
-                }, i * 100);
-            }
-        }
-
-        function startLoadingAnimation() {
-            const loadingBar = document.getElementById('loading-bar');
-            const loadingText = document.getElementById('loading-text');
-            
-            const steps = [
-                { width: 20, text: 'Carregando interface...' },
-                { width: 40, text: 'Inicializando banco de dados...' },
-                { width: 60, text: 'Configurando módulos...' },
-                { width: 80, text: 'Preparando sistema...' },
-                { width: 100, text: 'Sistema pronto!' }
-            ];
-            
-            let currentStep = 0;
-            
-            const interval = setInterval(() => {
-                if (currentStep < steps.length) {
-                    loadingBar.style.width = steps[currentStep].width + '%';
-                    loadingText.textContent = steps[currentStep].text;
-                    currentStep++;
-                } else {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.getElementById('enter-section').classList.add('scale-in');
-                        document.getElementById('enter-section').style.opacity = '1';
-                    }, 500);
-                }
-            }, 800);
-        }
-
-        function enterApp() {
-            // Fade out opening screen
-            document.getElementById('tech-opening').classList.add('fade-out');
-            
-            setTimeout(() => {
-                document.getElementById('tech-opening').style.display = 'none';
-                document.getElementById('main-app').classList.remove('hidden');
-                
-                // Initialize main app
-                loadData();
-                initializeSchedule();
-                updateCalendar();
-                updateTasksDisplay();
-                updateProgressDisplay();
-                showMotivationalMessage();
-                initializeChat();
-                
-                // Show welcome notification
-                setTimeout(() => {
-                    showNotification('🚀 Bem-vindo ao Estudo+ Fácil! Vamos organizar seus estudos!', 'success');
-                }, 500);
-            }, 1000);
-        }
-
-        // Logout function
-        function logout() {
-            if (confirm('Tem certeza que deseja sair?')) {
-                // Sign out from Firebase
-                if (window.firebaseAuthFunctions && window.firebaseAuth) {
-                    window.firebaseAuthFunctions.signOut(window.firebaseAuth).then(() => {
-                        console.log('🚪 Logout realizado com sucesso');
-                    }).catch((error) => {
-                        console.error('Erro no logout:', error);
-                    });
-                }
-                
-                // Reset user data
-                currentUser = 'Estudante';
-                currentUserId = null;
-                isFirebaseReady = false;
-                
-                // Clear local data
-                localStorage.removeItem('estudoFacilData');
-                
-                // Reset all data
-                scheduleData = {};
-                tasksData = { urgent: [], medium: [], low: [] };
-                eventsData = [];
-                diaryEntries = [];
-                gradesData = {};
-                achievements = [];
-                chatMessages = [];
-                sharedContent = [];
-                
-                // Hide main app and show login screen
-                document.getElementById('main-app').classList.add('hidden');
-                document.getElementById('tech-opening').style.display = 'none';
-                document.getElementById('login-screen').style.display = 'flex';
-                
-                // Clear login forms
-                document.getElementById('login-email').value = '';
-                document.getElementById('login-password').value = '';
-                document.getElementById('register-name').value = '';
-                document.getElementById('register-email').value = '';
-                document.getElementById('register-password').value = '';
-                document.getElementById('register-confirm-password').value = '';
-                
-                // Reset to login form
-                showLoginForm();
-                
-                // Remove loading overlay if exists
-                const loadingOverlay = document.getElementById('login-loading');
-                if (loadingOverlay) {
-                    loadingOverlay.remove();
-                }
-                
-                // Recreate matrix effect
-                initLoginScreen();
-                
-                showNotification('👋 Logout realizado com sucesso!', 'success');
-            }
-        }
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
 
         // Global variables
-        let currentDate = new Date();
-        let timerInterval;
-        let timerMinutes = 25;
-        let timerSeconds = 0;
-        let isTimerRunning = false;
-        let pomodoroCount = 0;
-        let currentMood = null;
-        let currentUser = 'Você';
+        window.db = db;
+        window.collection = collection;
+        window.addDoc = addDoc;
+        window.getDocs = getDocs;
+        window.doc = doc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+        window.onSnapshot = onSnapshot;
 
-        // Data storage
-        let scheduleData = {};
-        let tasksData = { urgent: [], medium: [], low: [] };
-        let eventsData = [];
-        let diaryEntries = [];
-        let gradesData = {};
-        let achievements = [];
-        let chatMessages = [];
-        let sharedContent = [];
+        // Initialize app
+        window.addEventListener('load', () => {
+            initializeApp();
+        });
+    </script>
 
-        // Navigation
-        function showSection(sectionName) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            
-            // Show selected section
-            document.getElementById(sectionName + '-section').classList.remove('hidden');
-            
-            // Update navigation buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('border-blue-500', 'text-blue-600');
-                btn.classList.add('text-gray-500');
-            });
-            
-            event.target.classList.add('border-blue-500', 'text-blue-600');
-            event.target.classList.remove('text-gray-500');
-        }
+    <script>
+        let currentBrand = '';
+        let currentModel = '';
+        let navigationHistory = [];
+        let brandsData = {};
+        let modelsData = {};
+        let tonesData = {};
 
-        // Schedule functions
-        let isCompactView = false;
-        
-        function initializeSchedule() {
-            updateScheduleDisplay();
-            updateScheduleStats();
-            updateTodaySchedule();
-            updateSubjectLegend();
-            updateUpcomingClasses();
-        }
-
-        function updateScheduleDisplay() {
-            const scheduleGrid = document.getElementById('schedule-grid');
-            const timeSlots = ['07:00', '08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
-            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-            
-            scheduleGrid.innerHTML = '';
-            
-            timeSlots.forEach(time => {
-                // Time column
-                const timeCell = document.createElement('div');
-                timeCell.className = 'text-center py-3 px-2 font-medium text-gray-600 bg-gray-50 rounded-lg border';
-                timeCell.textContent = time;
-                scheduleGrid.appendChild(timeCell);
-                
-                // Day columns
-                days.forEach(day => {
-                    const cell = document.createElement('div');
-                    cell.className = 'min-h-16 border-2 border-dashed border-gray-200 rounded-lg p-2 hover:border-blue-300 transition-all cursor-pointer hover:shadow-md';
-                    cell.onclick = () => addClassToSchedule(day, time);
-                    
-                    if (scheduleData[day] && scheduleData[day][time]) {
-                        const classData = scheduleData[day][time];
-                        cell.className = `min-h-16 rounded-lg p-2 text-white font-medium subject-${classData.subject} hover:shadow-lg transition-all cursor-pointer relative`;
-                        cell.innerHTML = `
-                            <div class="text-sm font-semibold">${classData.name}</div>
-                            <div class="text-xs opacity-90">${classData.room}</div>
-                            <div class="text-xs opacity-80">${classData.teacher || ''}</div>
-                            <button onclick="editClass(event, '${day}', '${time}')" class="absolute top-1 right-1 text-white hover:text-gray-200 text-xs">✏️</button>
-                            <button onclick="deleteClass(event, '${day}', '${time}')" class="absolute top-1 right-6 text-white hover:text-red-200 text-xs">🗑️</button>
-                        `;
-                    } else {
-                        cell.innerHTML = `
-                            <div class="text-center text-gray-400 text-xs">
-                                <div>➕</div>
-                                <div>Adicionar</div>
-                            </div>
-                        `;
-                    }
-                    
-                    scheduleGrid.appendChild(cell);
-                });
-            });
-        }
-
-        function updateScheduleStats() {
-            let totalClasses = 0;
-            const subjects = new Set();
-            const dayCount = { monday: 0, tuesday: 0, wednesday: 0, thursday: 0, friday: 0, saturday: 0, sunday: 0 };
-            
-            Object.keys(scheduleData).forEach(day => {
-                Object.keys(scheduleData[day]).forEach(time => {
-                    totalClasses++;
-                    subjects.add(scheduleData[day][time].subject);
-                    dayCount[day]++;
-                });
-            });
-            
-            document.getElementById('total-classes').textContent = totalClasses;
-            document.getElementById('total-subjects').textContent = subjects.size;
-            
-            // Find busiest day
-            const busiestDay = Object.keys(dayCount).reduce((a, b) => dayCount[a] > dayCount[b] ? a : b);
-            const dayNames = {
-                monday: 'Segunda', tuesday: 'Terça', wednesday: 'Quarta',
-                thursday: 'Quinta', friday: 'Sexta', saturday: 'Sábado', sunday: 'Domingo'
-            };
-            document.getElementById('busiest-day').textContent = dayCount[busiestDay] > 0 ? dayNames[busiestDay] : '-';
-            
-            // Next class
-            updateNextClass();
-        }
-
-        function updateNextClass() {
-            const now = new Date();
-            const currentDay = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][now.getDay()];
-            const currentTime = now.getHours() * 100 + now.getMinutes();
-            
-            let nextClass = null;
-            let minTimeDiff = Infinity;
-            
-            // Check today first
-            if (scheduleData[currentDay]) {
-                Object.keys(scheduleData[currentDay]).forEach(time => {
-                    const timeNum = parseInt(time.replace(':', ''));
-                    if (timeNum > currentTime) {
-                        const timeDiff = timeNum - currentTime;
-                        if (timeDiff < minTimeDiff) {
-                            minTimeDiff = timeDiff;
-                            nextClass = time;
-                        }
-                    }
-                });
+        // Initialize the application
+        async function initializeApp() {
+            try {
+                showLoading(true);
+                await loadAllData();
+                showLoading(false);
+                showBrands();
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                showError('Erro ao carregar dados. Tente novamente.');
+                showLoading(false);
             }
-            
-            document.getElementById('next-class').textContent = nextClass || '-';
         }
 
-        function updateTodaySchedule() {
-            const now = new Date();
-            const currentDay = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][now.getDay()];
-            const dayNames = {
-                sunday: 'Domingo', monday: 'Segunda-feira', tuesday: 'Terça-feira',
-                wednesday: 'Quarta-feira', thursday: 'Quinta-feira', friday: 'Sexta-feira', saturday: 'Sábado'
-            };
-            
-            document.getElementById('current-day-name').textContent = dayNames[currentDay];
-            
-            const todayContainer = document.getElementById('today-schedule');
-            const todayClassesCount = document.getElementById('today-classes-count');
-            
-            todayContainer.innerHTML = '';
-            
-            if (scheduleData[currentDay]) {
-                const todayClasses = Object.keys(scheduleData[currentDay]).sort();
-                todayClassesCount.textContent = todayClasses.length;
-                
-                todayClasses.forEach(time => {
-                    const classData = scheduleData[currentDay][time];
-                    const classElement = document.createElement('div');
-                    classElement.className = 'bg-white/20 rounded-lg p-3 flex items-center justify-between';
-                    classElement.innerHTML = `
-                        <div class="flex items-center space-x-3">
-                            <div class="text-lg font-bold">${time}</div>
-                            <div>
-                                <div class="font-medium">${classData.name}</div>
-                                <div class="text-sm text-blue-100">${classData.room} • ${classData.teacher || 'Professor'}</div>
-                            </div>
-                        </div>
-                        <div class="text-2xl">${getSubjectEmoji(classData.subject)}</div>
-                    `;
-                    todayContainer.appendChild(classElement);
+        // Load all data from Firebase
+        async function loadAllData() {
+            try {
+                // Load brands
+                const brandsSnapshot = await getDocs(collection(db, 'brands'));
+                brandsData = {};
+                brandsSnapshot.forEach((doc) => {
+                    brandsData[doc.id] = { id: doc.id, ...doc.data() };
                 });
+
+                // Load models
+                const modelsSnapshot = await getDocs(collection(db, 'models'));
+                modelsData = {};
+                modelsSnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (!modelsData[data.brandId]) {
+                        modelsData[data.brandId] = [];
+                    }
+                    modelsData[data.brandId].push({ id: doc.id, ...data });
+                });
+
+                // Load tones
+                const tonesSnapshot = await getDocs(collection(db, 'tones'));
+                tonesData = {};
+                tonesSnapshot.forEach((doc) => {
+                    tonesData[doc.id] = { id: doc.id, ...doc.data() };
+                });
+
+                // If no data exists, create default data
+                if (Object.keys(brandsData).length === 0) {
+                    await createDefaultData();
+                }
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                throw error;
+            }
+        }
+
+        // Create default data if none exists
+        async function createDefaultData() {
+            try {
+                // Default brands
+                const defaultBrands = [
+                    { name: 'Zoom', icon: 'Z' },
+                    { name: 'Boss', icon: 'B' },
+                    { name: 'Line 6', icon: 'L6' },
+                    { name: 'Cuvave', icon: 'CV' },
+                    { name: 'MK300', icon: 'MK' },
+                    { name: 'TC Electronic', icon: 'TC' }
+                ];
+
+                // Add brands to Firebase
+                for (const brand of defaultBrands) {
+                    const docRef = await addDoc(collection(db, 'brands'), brand);
+                    brandsData[docRef.id] = { id: docRef.id, ...brand };
+                }
+
+                // Default models
+                const brandIds = Object.keys(brandsData);
+                const defaultModels = [
+                    { brandId: brandIds[0], name: 'G1X Four', modelId: 'g1x' },
+                    { brandId: brandIds[0], name: 'G3', modelId: 'g3' },
+                    { brandId: brandIds[1], name: 'GT-1', modelId: 'gt1' },
+                    { brandId: brandIds[1], name: 'ME-80', modelId: 'me80' },
+                    { brandId: brandIds[2], name: 'HX Stomp', modelId: 'hx' },
+                    { brandId: brandIds[2], name: 'POD Go', modelId: 'pod' }
+                ];
+
+                // Add models to Firebase
+                for (const model of defaultModels) {
+                    const docRef = await addDoc(collection(db, 'models'), model);
+                    if (!modelsData[model.brandId]) {
+                        modelsData[model.brandId] = [];
+                    }
+                    modelsData[model.brandId].push({ id: docRef.id, ...model });
+                }
+
+                // Default tones
+                const defaultTones = [
+                    { name: 'Clean Worship', description: 'Ideal para base em músicas lentas e adoração', price: 'R$ 15,00' },
+                    { name: 'Rock Clássico', description: 'Timbre vintage para rock dos anos 70-80', price: 'R$ 18,00' },
+                    { name: 'Metal Moderno', description: 'High gain para metal contemporâneo', price: 'R$ 20,00' },
+                    { name: 'Blues Vintage', description: 'Timbre quente para blues tradicional', price: 'R$ 16,00' },
+                    { name: 'Pop/Rock', description: 'Versátil para pop rock e indie', price: 'R$ 17,00' },
+                    { name: 'Jazz Fusion', description: 'Timbre limpo com compressão para jazz', price: 'R$ 19,00' }
+                ];
+
+                // Add tones to Firebase
+                for (const tone of defaultTones) {
+                    const docRef = await addDoc(collection(db, 'tones'), tone);
+                    tonesData[docRef.id] = { id: docRef.id, ...tone };
+                }
+
+            } catch (error) {
+                console.error('Error creating default data:', error);
+                throw error;
+            }
+        }
+
+        // Show/hide loading state
+        function showLoading(show) {
+            const loadingState = document.getElementById('loadingState');
+            if (show) {
+                loadingState.classList.remove('hidden');
             } else {
-                todayClassesCount.textContent = '0';
-                todayContainer.innerHTML = '<div class="text-center text-blue-100 py-4">🎉 Nenhuma aula hoje! Aproveite para estudar ou descansar.</div>';
+                loadingState.classList.add('hidden');
             }
         }
 
-        function getSubjectEmoji(subject) {
-            const emojis = {
-                math: '🔢', portuguese: '📝', science: '🔬', history: '📚',
-                english: '🇺🇸', pe: '⚽', geography: '🌍', arts: '🎨',
-                music: '🎵', philosophy: '🤔'
-            };
-            return emojis[subject] || '📖';
+        // Show error message
+        function showError(message) {
+            const container = document.querySelector('.container');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            container.insertBefore(errorDiv, container.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
         }
 
-        function addClassToSchedule(day, time) {
-            showModal(`
-                <h3 class="text-lg font-semibold mb-4">➕ Adicionar Aula</h3>
-                <form onsubmit="saveClassToSchedule(event, '${day}', '${time}')">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome da Matéria</label>
-                        <input type="text" id="class-name" class="w-full p-2 border border-gray-300 rounded-lg" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Sala/Local</label>
-                        <input type="text" id="class-room" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="Ex: Sala 101">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Professor(a)</label>
-                        <input type="text" id="class-teacher" class="w-full p-2 border border-gray-300 rounded-lg" placeholder="Nome do professor">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Matéria</label>
-                        <select id="class-subject" class="w-full p-2 border border-gray-300 rounded-lg">
-                            <option value="math">🔢 Matemática</option>
-                            <option value="portuguese">📝 Português</option>
-                            <option value="science">🔬 Ciências</option>
-                            <option value="history">📚 História</option>
-                            <option value="english">🇺🇸 Inglês</option>
-                            <option value="pe">⚽ Educação Física</option>
-                            <option value="geography">🌍 Geografia</option>
-                            <option value="arts">🎨 Artes</option>
-                            <option value="music">🎵 Música</option>
-                            <option value="philosophy">🤔 Filosofia</option>
-                        </select>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button type="submit" class="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Salvar</button>
-                        <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Cancelar</button>
-                    </div>
-                </form>
-            `);
+        // Show success message
+        function showSuccess(message) {
+            const container = document.querySelector('.container');
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            container.insertBefore(successDiv, container.firstChild);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
         }
 
-        function saveClassToSchedule(event, day, time) {
-            event.preventDefault();
+        function showModels(brandId) {
+            currentBrand = brandId;
+            navigationHistory.push('brands');
             
-            if (!scheduleData[day]) {
-                scheduleData[day] = {};
-            }
+            document.getElementById('brandsSection').classList.add('hidden');
+            document.getElementById('modelsSection').classList.remove('hidden');
             
-            scheduleData[day][time] = {
-                name: document.getElementById('class-name').value,
-                room: document.getElementById('class-room').value,
-                teacher: document.getElementById('class-teacher').value,
-                subject: document.getElementById('class-subject').value
-            };
+            const brand = brandsData[brandId];
+            document.getElementById('brandName').textContent = brand ? brand.name : 'Marca';
             
-            updateScheduleDisplay();
-            updateScheduleStats();
-            updateTodaySchedule();
-            closeModal();
-            showNotification('✅ Aula adicionada com sucesso!', 'success');
-            saveData();
+            const modelsList = document.getElementById('modelsList');
+            const models = modelsData[brandId] || [];
+            
+            modelsList.innerHTML = models.map(model => `
+                <div class="card" onclick="showTones('${model.id}', '${model.name}')">
+                    <h3>${model.name}</h3>
+                    <p class="tone-count">${Object.keys(tonesData).length} timbres</p>
+                    <p style="color: #ccc; font-size: 14px;">Timbres profissionais testados</p>
+                </div>
+            `).join('');
         }
 
-        function editClass(event, day, time) {
-            event.stopPropagation();
-            const classData = scheduleData[day][time];
+        function showTones(modelId, modelName) {
+            currentModel = modelId;
+            navigationHistory.push('models');
             
-            showModal(`
-                <h3 class="text-lg font-semibold mb-4">✏️ Editar Aula</h3>
-                <form onsubmit="saveClassToSchedule(event, '${day}', '${time}')">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome da Matéria</label>
-                        <input type="text" id="class-name" class="w-full p-2 border border-gray-300 rounded-lg" value="${classData.name}" required>
+            document.getElementById('modelsSection').classList.add('hidden');
+            document.getElementById('tonesSection').classList.remove('hidden');
+            
+            const brand = brandsData[currentBrand];
+            document.getElementById('modelInfo').textContent = `${brand ? brand.name : 'Marca'} ${modelName}`;
+            
+            const tonesList = document.getElementById('tonesList');
+            const tones = Object.values(tonesData);
+            
+            tonesList.innerHTML = tones.map(tone => `
+                <div class="tone-item">
+                    <div class="tone-info">
+                        <h3>${tone.name}</h3>
+                        <p>${tone.description}</p>
+                        <span class="price">${tone.price}</span>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Sala/Local</label>
-                        <input type="text" id="class-room" class="w-full p-2 border border-gray-300 rounded-lg" value="${classData.room || ''}" placeholder="Ex: Sala 101">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Professor(a)</label>
-                        <input type="text" id="class-teacher" class="w-full p-2 border border-gray-300 rounded-lg" value="${classData.teacher || ''}" placeholder="Nome do professor">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Matéria</label>
-                        <select id="class-subject" class="w-full p-2 border border-gray-300 rounded-lg">
-                            <option value="math" ${classData.subject === 'math' ? 'selected' : ''}>🔢 Matemática</option>
-                            <option value="portuguese" ${classData.subject === 'portuguese' ? 'selected' : ''}>📝 Português</option>
-                            <option value="science" ${classData.subject === 'science' ? 'selected' : ''}>🔬 Ciências</option>
-                            <option value="history" ${classData.subject === 'history' ? 'selected' : ''}>📚 História</option>
-                            <option value="english" ${classData.subject === 'english' ? 'selected' : ''}>🇺🇸 Inglês</option>
-                            <option value="pe" ${classData.subject === 'pe' ? 'selected' : ''}>⚽ Educação Física</option>
-                            <option value="geography" ${classData.subject === 'geography' ? 'selected' : ''}>🌍 Geografia</option>
-                            <option value="arts" ${classData.subject === 'arts' ? 'selected' : ''}>🎨 Artes</option>
-                            <option value="music" ${classData.subject === 'music' ? 'selected' : ''}>🎵 Música</option>
-                            <option value="philosophy" ${classData.subject === 'philosophy' ? 'selected' : ''}>🤔 Filosofia</option>
-                        </select>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button type="submit" class="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Salvar</button>
-                        <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Cancelar</button>
-                    </div>
-                </form>
-            `);
+                    <button onclick="openWhatsApp('${tone.name}')" class="whatsapp-btn">
+                        📱 Liberar Acesso
+                    </button>
+                </div>
+            `).join('');
         }
 
-        function deleteClass(event, day, time) {
-            event.stopPropagation();
-            if (confirm('Tem certeza que deseja excluir esta aula?')) {
-                delete scheduleData[day][time];
-                if (Object.keys(scheduleData[day]).length === 0) {
-                    delete scheduleData[day];
-                }
-                updateScheduleDisplay();
-                updateScheduleStats();
-                updateTodaySchedule();
-                showNotification('🗑️ Aula removida com sucesso!', 'success');
-                saveData();
+        function openWhatsApp(toneName) {
+            const brand = brandsData[currentBrand];
+            const modelInfo = `${brand ? brand.name : 'Marca'} ${currentModel}`;
+            const message = `👋 Olá! Tenho interesse no timbre *${toneName}* para a pedaleira *${modelInfo}*. Como posso liberar o acesso?`;
+            const whatsappUrl = `https://wa.me/5597984582107?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function showBrands() {
+            navigationHistory = [];
+            document.getElementById('modelsSection').classList.add('hidden');
+            document.getElementById('tonesSection').classList.add('hidden');
+            document.getElementById('brandsSection').classList.remove('hidden');
+            
+            updateBrandsDisplay();
+        }
+
+        function updateBrandsDisplay() {
+            const brandGrid = document.getElementById('brandGrid');
+            const brands = Object.values(brandsData);
+            
+            brandGrid.innerHTML = brands.map(brand => {
+                const modelCount = modelsData[brand.id] ? modelsData[brand.id].length : 0;
+                return `
+                    <div class="card brand-card" onclick="showModels('${brand.id}')">
+                        <div class="brand-icon">${brand.icon}</div>
+                        <h3>${brand.name}</h3>
+                        <p class="tone-count">${modelCount} modelos</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function goBack() {
+            const lastPage = navigationHistory.pop();
+            if (lastPage === 'models') {
+                document.getElementById('tonesSection').classList.add('hidden');
+                document.getElementById('modelsSection').classList.remove('hidden');
+            } else {
+                showBrands();
             }
         }
 
-        // Task functions
-        function addTask() {
-            showModal(`
-                <h3 class="text-lg font-semibold mb-4">➕ Nova Tarefa</h3>
-                <form onsubmit="saveTask(event)">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição da Tarefa</label>
-                        <input type="text" id="task-description" class="w-full p-2 border border-gray-300 rounded-lg" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Matéria</label>
-                        <input type="text" id="task-subject" class="w-full p-2 border border-gray-300 rounded-lg">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
-                        <select id="task-priority" class="w-full p-2 border border-gray-300 rounded-lg">
-                            <option value="urgent">🔴 Urgente</option>
-                            <option value="medium">🟡 Médio</option>
-                            <option value="low">🟢 Tranquilo</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Data de Entrega</label>
-                        <input type="date" id="task-date" class="w-full p-2 border border-gray-300 rounded-lg">
-                    </div>
-                    <div class="flex space-x-2">
-                        <button type="submit" class="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600">Salvar</button>
-                        <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Cancelar</button>
-                    </div>
-                </form>
-            `);
+        function toggleAdmin() {
+            const panel = document.getElementById('adminPanel');
+            if (panel.style.display === 'block') {
+                panel.style.display = 'none';
+            } else {
+                panel.style.display = 'block';
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('adminMenu').classList.add('hidden');
+                document.getElementById('adminBrands').classList.add('hidden');
+                document.getElementById('adminModels').classList.add('hidden');
+                document.getElementById('adminTones').classList.add('hidden');
+                document.getElementById('adminPassword').value = '';
+            }
         }
 
-        function saveTask(event) {
-            event.preventDefault();
-            const task = {
-                id: Date.now(),
-                description: document.getElementById('task-description').value,
-                subject: document.getElementById('task-subject').value,
-                priority: document.getElementById('task-priority').value,
-                date: document.getElementById('task-date').value,
-                completed: false
-            };
+        function adminLogin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === 'Wer123&@') {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('adminMenu').classList.remove('hidden');
+            } else {
+                alert('Senha incorreta!');
+            }
+        }
+
+        function showAdminMenu() {
+            document.getElementById('adminBrands').classList.add('hidden');
+            document.getElementById('adminModels').classList.add('hidden');
+            document.getElementById('adminTones').classList.add('hidden');
+            document.getElementById('adminMenu').classList.remove('hidden');
+        }
+
+        function showAdminSection(section) {
+            document.getElementById('adminMenu').classList.add('hidden');
+            document.getElementById('adminBrands').classList.add('hidden');
+            document.getElementById('adminModels').classList.add('hidden');
+            document.getElementById('adminTones').classList.add('hidden');
             
-            tasksData[task.priority].push(task);
-            updateTasksDisplay();
-            closeModal();
-            showNotification('✅ Tarefa adicionada com sucesso!', 'success');
-            saveData();
+            if (section === 'brands') {
+                document.getElementById('adminBrands').classList.remove('hidden');
+                loadBrandsList();
+            } else if (section === 'models') {
+                document.getElementById('adminModels').classList.remove('hidden');
+                loadModelsList();
+                loadBrandOptions();
+            } else if (section === 'tones') {
+                document.getElementById('adminTones').classList.remove('hidden');
+                loadTonesList();
+            }
         }
 
-        function updateTasksDisplay() {
-            ['urgent', 'medium', 'low'].forEach(priority => {
-                const container = document.getElementById(priority + '-tasks');
-                container.innerHTML = '';
-                
-                tasksData[priority].forEach(task => {
-                    const taskElement = document.createElement('div');
-                    taskElement.className = `p-3 bg-gray-50 rounded-lg priority-${priority === 'urgent' ? 'high' : priority === 'medium' ? 'medium' : 'low'} ${task.completed ? 'opacity-50' : ''}`;
-                    taskElement.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <div class="flex-1">
-                                <div class="font-medium ${task.completed ? 'line-through' : ''}">${task.description}</div>
-                                <div class="text-sm text-gray-600">${task.subject} ${task.date ? '• ' + task.date : ''}</div>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button onclick="toggleTask(${task.id})" class="text-green-600 hover:text-green-800">
-                                    ${task.completed ? '↩️' : '✅'}
-                                </button>
-                                <button onclick="deleteTask(${task.id})" class="text-red-600 hover:text-red-800">🗑️</button>
-                            </div>
+        function loadBrandsList() {
+            const brandsList = document.getElementById('brandsList');
+            const brands = Object.values(brandsData);
+            
+            brandsList.innerHTML = brands.map(brand => {
+                const modelCount = modelsData[brand.id] ? modelsData[brand.id].length : 0;
+                return `
+                    <div style="background: #1c1c1c; padding: 10px; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${brand.name}</strong>
+                            <span style="color: #ccc; margin-left: 10px;">(${modelCount} modelos)</span>
                         </div>
-                    `;
-                    container.appendChild(taskElement);
+                        <button onclick="deleteBrand('${brand.id}')" style="background: #d32f2f; padding: 5px 10px;">Excluir</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadModelsList() {
+            const modelsList = document.getElementById('modelsList');
+            let allModels = [];
+            
+            Object.keys(modelsData).forEach(brandId => {
+                const brand = brandsData[brandId];
+                modelsData[brandId].forEach(model => {
+                    allModels.push({...model, brandName: brand ? brand.name : 'Marca'});
                 });
             });
-        }
-
-        function toggleTask(taskId) {
-            ['urgent', 'medium', 'low'].forEach(priority => {
-                const task = tasksData[priority].find(t => t.id === taskId);
-                if (task) {
-                    task.completed = !task.completed;
-                    if (task.completed) {
-                        checkAchievements();
-                        showNotification('🎉 Parabéns! Tarefa concluída!', 'success');
-                    }
-                }
-            });
-            updateTasksDisplay();
-            saveData();
-        }
-
-        function deleteTask(taskId) {
-            ['urgent', 'medium', 'low'].forEach(priority => {
-                tasksData[priority] = tasksData[priority].filter(t => t.id !== taskId);
-            });
-            updateTasksDisplay();
-            saveData();
-        }
-
-        // Calendar functions
-        function updateCalendar() {
-            const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
             
-            document.getElementById('current-month').textContent = 
-                monthNames[currentDate.getMonth()] + ' ' + currentDate.getFullYear();
-            
-            const calendarGrid = document.getElementById('calendar-grid');
-            calendarGrid.innerHTML = '';
-            
-            // Day headers
-            const dayHeaders = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-            dayHeaders.forEach(day => {
-                const dayHeader = document.createElement('div');
-                dayHeader.className = 'text-center font-semibold text-gray-600 py-2';
-                dayHeader.textContent = day;
-                calendarGrid.appendChild(dayHeader);
-            });
-            
-            // Calendar days
-            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-            const startDate = new Date(firstDay);
-            startDate.setDate(startDate.getDate() - firstDay.getDay());
-            
-            for (let i = 0; i < 42; i++) {
-                const cellDate = new Date(startDate);
-                cellDate.setDate(startDate.getDate() + i);
-                
-                const dayCell = document.createElement('div');
-                dayCell.className = 'min-h-20 p-2 border border-gray-200 cursor-pointer hover:bg-blue-50';
-                
-                if (cellDate.getMonth() !== currentDate.getMonth()) {
-                    dayCell.classList.add('text-gray-400');
-                }
-                
-                const dayEvents = eventsData.filter(event => 
-                    new Date(event.date).toDateString() === cellDate.toDateString()
-                );
-                
-                dayCell.innerHTML = `
-                    <div class="font-medium">${cellDate.getDate()}</div>
-                    ${dayEvents.map(event => `<div class="text-xs bg-blue-100 text-blue-800 rounded px-1 mt-1">${event.title}</div>`).join('')}
-                `;
-                
-                dayCell.onclick = () => addEventToDate(cellDate);
-                calendarGrid.appendChild(dayCell);
-            }
-        }
-
-        function previousMonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            updateCalendar();
-        }
-
-        function nextMonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            updateCalendar();
-        }
-
-        function addEvent() {
-            showModal(`
-                <h3 class="text-lg font-semibold mb-4">➕ Novo Evento</h3>
-                <form onsubmit="saveEvent(event)">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Título do Evento</label>
-                        <input type="text" id="event-title" class="w-full p-2 border border-gray-300 rounded-lg" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Data</label>
-                        <input type="date" id="event-date" class="w-full p-2 border border-gray-300 rounded-lg" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
-                        <select id="event-type" class="w-full p-2 border border-gray-300 rounded-lg">
-                            <option value="exam">📝 Prova</option>
-                            <option value="assignment">📚 Trabalho</option>
-                            <option value="event">🎉 Evento</option>
-                            <option value="reminder">⏰ Lembrete</option>
-                        </select>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button type="submit" class="flex-1 bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600">Salvar</button>
-                        <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Cancelar</button>
-                    </div>
-                </form>
-            `);
-        }
-
-        function saveEvent(event) {
-            event.preventDefault();
-            const newEvent = {
-                id: Date.now(),
-                title: document.getElementById('event-title').value,
-                date: document.getElementById('event-date').value,
-                type: document.getElementById('event-type').value
-            };
-            
-            eventsData.push(newEvent);
-            updateCalendar();
-            closeModal();
-            showNotification('📅 Evento adicionado com sucesso!', 'success');
-            saveData();
-        }
-
-        // Diary functions
-        function setMood(mood) {
-            currentMood = mood;
-            document.querySelectorAll('.mood-emoji').forEach(emoji => {
-                emoji.style.transform = 'scale(1)';
-            });
-            event.target.style.transform = 'scale(1.3)';
-        }
-
-        function saveDiaryEntry() {
-            const learning = document.getElementById('learning-notes').value;
-            const difficulties = document.getElementById('difficulties').value;
-            
-            if (!learning && !difficulties && !currentMood) {
-                showNotification('⚠️ Preencha pelo menos um campo!', 'warning');
-                return;
-            }
-            
-            const entry = {
-                id: Date.now(),
-                date: new Date().toLocaleDateString('pt-BR'),
-                mood: currentMood,
-                learning: learning,
-                difficulties: difficulties
-            };
-            
-            diaryEntries.unshift(entry);
-            updateDiaryDisplay();
-            
-            // Clear form
-            document.getElementById('learning-notes').value = '';
-            document.getElementById('difficulties').value = '';
-            currentMood = null;
-            document.querySelectorAll('.mood-emoji').forEach(emoji => {
-                emoji.style.transform = 'scale(1)';
-            });
-            
-            showNotification('📖 Entrada do diário salva!', 'success');
-            saveData();
-        }
-
-        function updateDiaryDisplay() {
-            const container = document.getElementById('diary-entries');
-            container.innerHTML = '';
-            
-            diaryEntries.slice(0, 5).forEach(entry => {
-                const entryElement = document.createElement('div');
-                entryElement.className = 'bg-white p-4 rounded-lg card-shadow';
-                
-                const moodEmoji = entry.mood === 'happy' ? '😃' : entry.mood === 'neutral' ? '😐' : entry.mood === 'sad' ? '😞' : '';
-                
-                entryElement.innerHTML = `
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="font-medium text-gray-800">${entry.date}</div>
-                        <div class="text-2xl">${moodEmoji}</div>
-                    </div>
-                    ${entry.learning ? `<div class="mb-2"><strong>Aprendizado:</strong> ${entry.learning}</div>` : ''}
-                    ${entry.difficulties ? `<div><strong>Dificuldades:</strong> ${entry.difficulties}</div>` : ''}
-                `;
-                
-                container.appendChild(entryElement);
-            });
-        }
-
-        // Progress functions
-        function updateProgressDisplay() {
-            updateGradesChart();
-            updateAchievementsList();
-        }
-
-        function updateGradesChart() {
-            const container = document.getElementById('grades-chart');
-            container.innerHTML = '';
-            
-            Object.keys(gradesData).forEach(subject => {
-                const grades = gradesData[subject];
-                const average = grades.reduce((sum, grade) => sum + grade.value, 0) / grades.length;
-                
-                const subjectElement = document.createElement('div');
-                subjectElement.className = 'mb-4';
-                subjectElement.innerHTML = `
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="font-medium">${subject}</span>
-                        <span class="text-lg font-bold text-blue-600">${average.toFixed(1)}</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-3">
-                        <div class="bg-blue-500 h-3 rounded-full" style="width: ${(average / 10) * 100}%"></div>
-                    </div>
-                `;
-                container.appendChild(subjectElement);
-            });
-        }
-
-        function addGrade() {
-            showModal(`
-                <h3 class="text-lg font-semibold mb-4">➕ Adicionar Nota</h3>
-                <form onsubmit="saveGrade(event)">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Matéria</label>
-                        <input type="text" id="grade-subject" class="w-full p-2 border border-gray-300 rounded-lg" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nota (0-10)</label>
-                        <input type="number" id="grade-value" min="0" max="10" step="0.1" class="w-full p-2 border border-gray-300 rounded-lg" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Avaliação</label>
-                        <select id="grade-type" class="w-full p-2 border border-gray-300 rounded-lg">
-                            <option value="exam">Prova</option>
-                            <option value="assignment">Trabalho</option>
-                            <option value="participation">Participação</option>
-                        </select>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button type="submit" class="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Salvar</button>
-                        <button type="button" onclick="closeModal()" class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400">Cancelar</button>
-                    </div>
-                </form>
-            `);
-        }
-
-        function saveGrade(event) {
-            event.preventDefault();
-            const subject = document.getElementById('grade-subject').value;
-            const value = parseFloat(document.getElementById('grade-value').value);
-            const type = document.getElementById('grade-type').value;
-            
-            if (!gradesData[subject]) {
-                gradesData[subject] = [];
-            }
-            
-            gradesData[subject].push({
-                value: value,
-                type: type,
-                date: new Date().toLocaleDateString('pt-BR')
-            });
-            
-            updateProgressDisplay();
-            closeModal();
-            showNotification('📊 Nota adicionada com sucesso!', 'success');
-            checkAchievements();
-            saveData();
-        }
-
-        // Achievement system
-        function checkAchievements() {
-            const completedTasks = Object.values(tasksData).flat().filter(task => task.completed).length;
-            const totalGrades = Object.values(gradesData).flat().length;
-            
-            // Task completion achievements
-            if (completedTasks >= 5 && !achievements.find(a => a.id === 'tasks_5')) {
-                addAchievement('tasks_5', '🎯 Organizador', 'Completou 5 tarefas!');
-            }
-            
-            if (completedTasks >= 20 && !achievements.find(a => a.id === 'tasks_20')) {
-                addAchievement('tasks_20', '⭐ Super Organizador', 'Completou 20 tarefas!');
-            }
-            
-            // Grade achievements
-            if (totalGrades >= 5 && !achievements.find(a => a.id === 'grades_5')) {
-                addAchievement('grades_5', '📚 Estudioso', 'Registrou 5 notas!');
-            }
-            
-            // Diary achievements
-            if (diaryEntries.length >= 7 && !achievements.find(a => a.id === 'diary_7')) {
-                addAchievement('diary_7', '📖 Reflexivo', 'Escreveu no diário por 7 dias!');
-            }
-        }
-
-        function addAchievement(id, title, description) {
-            achievements.push({ id, title, description, date: new Date().toLocaleDateString('pt-BR') });
-            updateAchievementsList();
-            showNotification(`🏆 Nova conquista: ${title}!`, 'success');
-            saveData();
-        }
-
-        function updateAchievementsList() {
-            const container = document.getElementById('achievements-list');
-            container.innerHTML = '';
-            
-            if (achievements.length === 0) {
-                container.innerHTML = '<div class="text-gray-500 text-center py-4">Nenhuma conquista ainda. Continue estudando!</div>';
-                return;
-            }
-            
-            achievements.forEach(achievement => {
-                const achievementElement = document.createElement('div');
-                achievementElement.className = 'flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg achievement-badge';
-                achievementElement.innerHTML = `
-                    <div class="text-2xl">🏆</div>
-                    <div class="flex-1">
-                        <div class="font-semibold text-yellow-800">${achievement.title}</div>
-                        <div class="text-sm text-yellow-600">${achievement.description}</div>
-                        <div class="text-xs text-yellow-500">${achievement.date}</div>
-                    </div>
-                `;
-                container.appendChild(achievementElement);
-            });
-        }
-
-        function showAchievements() {
-            let achievementsList = achievements.map(a => `
-                <div class="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg mb-2">
-                    <div class="text-2xl">🏆</div>
+            modelsList.innerHTML = allModels.map(model => `
+                <div style="background: #1c1c1c; padding: 10px; margin: 5px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div class="font-semibold text-yellow-800">${a.title}</div>
-                        <div class="text-sm text-yellow-600">${a.description}</div>
+                        <strong>${model.name}</strong>
+                        <span style="color: #ccc; margin-left: 10px;">${model.brandName}</span>
+                    </div>
+                    <button onclick="deleteModel('${model.id}')" style="background: #d32f2f; padding: 5px 10px;">Excluir</button>
+                </div>
+            `).join('');
+        }
+
+        function loadTonesList() {
+            const tonesList = document.getElementById('tonesListAdmin');
+            const tones = Object.values(tonesData);
+            
+            tonesList.innerHTML = tones.map(tone => `
+                <div style="background: #1c1c1c; padding: 15px; margin: 5px 0; border-radius: 5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                        <div style="flex: 1;">
+                            <input type="text" value="${tone.name}" class="admin-input" id="tone-name-${tone.id}" style="margin-bottom: 5px;">
+                            <input type="text" value="${tone.description}" class="admin-input" id="tone-desc-${tone.id}" style="margin-bottom: 5px;">
+                            <input type="text" value="${tone.price}" class="admin-input" id="tone-price-${tone.id}">
+                        </div>
+                        <div style="margin-left: 10px;">
+                            <button onclick="updateTone('${tone.id}')" style="background: #4caf50; padding: 5px 10px; margin-bottom: 5px; display: block;">Salvar</button>
+                            <button onclick="deleteTone('${tone.id}')" style="background: #d32f2f; padding: 5px 10px;">Excluir</button>
+                        </div>
                     </div>
                 </div>
             `).join('');
-            
-            if (achievements.length === 0) {
-                achievementsList = '<div class="text-gray-500 text-center py-4">Nenhuma conquista ainda. Continue estudando!</div>';
-            }
-            
-            showModal(`
-                <h3 class="text-lg font-semibold mb-4">🏆 Suas Conquistas</h3>
-                <div class="max-h-96 overflow-y-auto">
-                    ${achievementsList}
-                </div>
-                <button onclick="closeModal()" class="w-full mt-4 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Fechar</button>
-            `);
         }
 
-        // Chat functions
-        function initializeChat() {
-            // Add some sample messages
-            if (chatMessages.length === 0) {
-                addSampleMessages();
-            }
-            updateChatDisplay();
-            updateSharedContentDisplay();
-        }
-
-        function addSampleMessages() {
-            const sampleMessages = [
-                { user: 'Ana Silva', message: 'Oi pessoal! Acabei de terminar minha sessão de estudo 📚', time: '14:30', type: 'message' },
-                { user: 'Bruno Costa', message: 'Que legal Ana! Eu também estou usando o planner, muito útil! 💪', time: '14:32', type: 'message' },
-                { user: 'Carla Lima', message: 'Alguém pode me ajudar com matemática? Estou com dificuldade em equações 😅', time: '14:35', type: 'message' },
-                { user: 'Diego Santos', message: 'Claro Carla! Posso te explicar depois da aula 📚', time: '14:36', type: 'message' },
-                { user: 'Ana Silva', message: '❤️', time: '14:37', type: 'emoji' }
-            ];
+        function loadBrandOptions() {
+            const select = document.getElementById('modelBrandSelect');
+            const brands = Object.values(brandsData);
             
-            chatMessages = sampleMessages;
+            select.innerHTML = '<option value="">Selecione uma marca</option>' + 
+                brands.map(brand => `<option value="${brand.id}">${brand.name}</option>`).join('');
         }
 
-        function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
+        async function addBrand() {
+            const name = document.getElementById('newBrandName').value.trim();
+            const icon = document.getElementById('newBrandIcon').value.trim();
+            const btn = document.getElementById('addBrandBtn');
             
-            if (message) {
-                const newMessage = {
-                    user: currentUser,
-                    message: message,
-                    time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                    type: 'message'
-                };
-                
-                // Save to Firebase
-                saveChatMessage(newMessage);
-                input.value = '';
-                
-                // Simulate responses from other users occasionally
-                if (Math.random() < 0.3) {
-                    setTimeout(simulateResponse, 1000 + Math.random() * 3000);
-                }
-            }
-        }
-
-        function sendEmoji(emoji) {
-            const newMessage = {
-                user: currentUser,
-                message: emoji,
-                time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                type: 'emoji'
-            };
-            
-            // Save to Firebase
-            saveChatMessage(newMessage);
-        }
-
-        function handleChatKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        function updateChatDisplay() {
-            const container = document.getElementById('chat-messages');
-            container.innerHTML = '';
-            
-            chatMessages.slice(-20).forEach(msg => {
-                const messageElement = document.createElement('div');
-                const isCurrentUser = msg.user === currentUser;
-                
-                messageElement.className = `flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`;
-                
-                if (msg.type === 'emoji') {
-                    messageElement.innerHTML = `
-                        <div class="flex items-center space-x-2 ${isCurrentUser ? 'flex-row-reverse space-x-reverse' : ''}">
-                            <div class="w-8 h-8 ${getUserColor(msg.user)} rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                ${msg.user.charAt(0).toUpperCase()}
-                            </div>
-                            <div class="text-2xl">${msg.message}</div>
-                            <div class="text-xs text-gray-500">${msg.time}</div>
-                        </div>
-                    `;
-                } else {
-                    messageElement.innerHTML = `
-                        <div class="flex items-start space-x-2 max-w-xs ${isCurrentUser ? 'flex-row-reverse space-x-reverse' : ''}">
-                            <div class="w-8 h-8 ${getUserColor(msg.user)} rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                ${msg.user.charAt(0).toUpperCase()}
-                            </div>
-                            <div class="${isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-100'} rounded-lg p-3">
-                                <div class="font-medium text-sm ${isCurrentUser ? 'text-blue-100' : 'text-gray-600'}">${msg.user}</div>
-                                <div class="text-sm">${msg.message}</div>
-                                <div class="text-xs ${isCurrentUser ? 'text-blue-200' : 'text-gray-500'} mt-1">${msg.time}</div>
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                container.appendChild(messageElement);
-            });
-            
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function getUserColor(username) {
-            const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500', 'bg-pink-500', 'bg-indigo-500'];
-            const index = username.length % colors.length;
-            return colors[index];
-        }
-
-        function simulateResponse() {
-            const responses = [
-                { user: 'Ana Silva', message: 'Boa! Continue assim! 👏' },
-                { user: 'Bruno Costa', message: 'Alguém quer formar um grupo de estudos? 📚' },
-                { user: 'Carla Lima', message: 'Acabei de completar 3 tarefas hoje! 🎉' },
-                { user: 'Diego Santos', message: 'Vamos que vamos! Foco nos estudos! 💪' }
-            ];
-            
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            const newMessage = {
-                user: randomResponse.user,
-                message: randomResponse.message,
-                time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                type: 'message'
-            };
-            
-            chatMessages.push(newMessage);
-            updateChatDisplay();
-        }
-
-        function shareProgress() {
-            if (Object.keys(gradesData).length === 0) {
-                showNotification('⚠️ Adicione algumas notas primeiro!', 'warning');
+            if (!name || !icon) {
+                alert('Preencha todos os campos!');
                 return;
             }
             
-            const totalGrades = Object.values(gradesData).flat().length;
-            const completedTasks = Object.values(tasksData).flat().filter(task => task.completed).length;
-            
-            const progressShare = {
-                id: Date.now(),
-                user: currentUser,
-                type: 'progress',
-                title: '📊 Meu Progresso Escolar',
-                content: {
-                    grades: totalGrades,
-                    tasks: completedTasks,
-                    achievements: achievements.length
-                },
-                time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                date: new Date().toLocaleDateString('pt-BR')
-            };
-            
-            // Save to Firebase
-            saveSharedContent(progressShare);
-            
-            // Also send a chat message
-            const chatMessage = {
-                user: currentUser,
-                message: `Compartilhei meu progresso! 📊 ${totalGrades} notas, ${completedTasks} tarefas concluídas!`,
-                time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                type: 'message'
-            };
-            
-            saveChatMessage(chatMessage);
-            showNotification('📊 Progresso compartilhado com sucesso!', 'success');
-        }
-
-        function shareDiary() {
-            if (diaryEntries.length === 0) {
-                showNotification('⚠️ Escreva no seu diário primeiro!', 'warning');
-                return;
-            }
-            
-            const latestEntry = diaryEntries[0];
-            const moodEmoji = latestEntry.mood === 'happy' ? '😃' : latestEntry.mood === 'neutral' ? '😐' : latestEntry.mood === 'sad' ? '😞' : '😊';
-            
-            const diaryShare = {
-                id: Date.now(),
-                user: currentUser,
-                type: 'diary',
-                title: '📖 Meu Diário de Hoje',
-                content: {
-                    mood: moodEmoji,
-                    learning: latestEntry.learning,
-                    difficulties: latestEntry.difficulties,
-                    date: latestEntry.date
-                },
-                time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                date: new Date().toLocaleDateString('pt-BR')
-            };
-            
-            // Save to Firebase
-            saveSharedContent(diaryShare);
-            
-            // Also send a chat message
-            const chatMessage = {
-                user: currentUser,
-                message: `Compartilhei meu diário de hoje! ${moodEmoji} Venham ver como foi meu dia de estudos!`,
-                time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                type: 'message'
-            };
-            
-            saveChatMessage(chatMessage);
-            showNotification('📖 Diário compartilhado com sucesso!', 'success');
-        }
-
-        function updateSharedContentDisplay() {
-            const container = document.getElementById('shared-content');
-            container.innerHTML = '';
-            
-            if (sharedContent.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">Nenhum compartilhamento ainda. Seja o primeiro a compartilhar!</div>';
-                return;
-            }
-            
-            sharedContent.slice(0, 6).forEach(share => {
-                const shareElement = document.createElement('div');
-                shareElement.className = 'bg-white rounded-lg p-4 card-shadow hover:shadow-lg transition-shadow';
-                
-                if (share.type === 'progress') {
-                    shareElement.innerHTML = `
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-8 h-8 ${getUserColor(share.user)} rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                    ${share.user.charAt(0).toUpperCase()}
-                                </div>
-                                <div class="font-medium text-sm">${share.user}</div>
-                            </div>
-                            <div class="text-xs text-gray-500">${share.time}</div>
-                        </div>
-                        <h4 class="font-semibold text-gray-800 mb-2">${share.title}</h4>
-                        <div class="grid grid-cols-2 gap-2 text-sm">
-                            <div class="bg-blue-50 p-2 rounded">
-                                <div class="font-medium text-blue-800">📝 Notas</div>
-                                <div class="text-blue-600">${share.content.grades}</div>
-                            </div>
-                            <div class="bg-green-50 p-2 rounded">
-                                <div class="font-medium text-green-800">✅ Tarefas</div>
-                                <div class="text-green-600">${share.content.tasks}</div>
-                            </div>
-                            <div class="bg-yellow-50 p-2 rounded col-span-2">
-                                <div class="font-medium text-yellow-800">🏆 Conquistas</div>
-                                <div class="text-yellow-600">${share.content.achievements}</div>
-                            </div>
-                        </div>
-                        <div class="mt-3 flex space-x-2">
-                            <button onclick="likeShare(${share.id})" class="text-sm text-blue-600 hover:text-blue-800">👍 Curtir</button>
-                            <button onclick="commentShare(${share.id})" class="text-sm text-gray-600 hover:text-gray-800">💬 Comentar</button>
-                        </div>
-                    `;
-                } else if (share.type === 'diary') {
-                    shareElement.innerHTML = `
-                        <div class="flex items-center justify-between mb-3">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-8 h-8 ${getUserColor(share.user)} rounded-full flex items-center justify-center text-white text-sm font-bold">
-                                    ${share.user.charAt(0).toUpperCase()}
-                                </div>
-                                <div class="font-medium text-sm">${share.user}</div>
-                            </div>
-                            <div class="text-xs text-gray-500">${share.time}</div>
-                        </div>
-                        <h4 class="font-semibold text-gray-800 mb-2">${share.title}</h4>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-2xl">${share.content.mood}</span>
-                                <span class="text-gray-600">Como me senti hoje</span>
-                            </div>
-                            ${share.content.learning ? `<div class="bg-blue-50 p-2 rounded"><strong>Aprendi:</strong> ${share.content.learning.substring(0, 100)}${share.content.learning.length > 100 ? '...' : ''}</div>` : ''}
-                            ${share.content.difficulties ? `<div class="bg-orange-50 p-2 rounded"><strong>Dificuldades:</strong> ${share.content.difficulties.substring(0, 100)}${share.content.difficulties.length > 100 ? '...' : ''}</div>` : ''}
-                        </div>
-                        <div class="mt-3 flex space-x-2">
-                            <button onclick="likeShare(${share.id})" class="text-sm text-blue-600 hover:text-blue-800">👍 Curtir</button>
-                            <button onclick="commentShare(${share.id})" class="text-sm text-gray-600 hover:text-gray-800">💬 Comentar</button>
-                        </div>
-                    `;
-                }
-                
-                container.appendChild(shareElement);
-            });
-        }
-
-        function likeShare(shareId) {
-            const chatMessage = {
-                user: currentUser,
-                message: '👍',
-                time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                type: 'emoji'
-            };
-            
-            chatMessages.push(chatMessage);
-            updateChatDisplay();
-            showNotification('👍 Curtida enviada!', 'success');
-        }
-
-        function commentShare(shareId) {
-            const comment = prompt('Digite seu comentário:');
-            if (comment && comment.trim()) {
-                const chatMessage = {
-                    user: currentUser,
-                    message: `💬 ${comment.trim()}`,
-                    time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                    type: 'message'
-                };
-                
-                chatMessages.push(chatMessage);
-                updateChatDisplay();
-                showNotification('💬 Comentário enviado!', 'success');
-            }
-        }
-
-        // Utility functions
-        function showModal(content) {
-            document.getElementById('modal-content').innerHTML = content;
-            document.getElementById('modal-overlay').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('modal-overlay').classList.add('hidden');
-        }
-
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = `notification p-4 rounded-lg text-white max-w-sm ${
-                type === 'success' ? 'bg-green-500' : 
-                type === 'warning' ? 'bg-yellow-500' : 
-                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
-            }`;
-            notification.textContent = message;
-            
-            document.getElementById('notifications').appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        function showMotivationalMessage() {
-            const messages = [
-                'Você consegue! Vamos focar nos estudos! 💪',
-                'Continue firme! Cada minuto conta! ⭐',
-                'Você está indo muito bem! 🌟',
-                'Foco e determinação! Você é capaz! 🚀',
-                'Mais uma sessão, mais conhecimento! 📚'
-            ];
-            
-            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-            // This would be used if we had a motivation message element
-        }
-
-        // Firebase data persistence
-        let currentUserId = null;
-        let isFirebaseReady = false;
-
-        // Initialize Firebase data when auth is ready
-        window.initFirebaseData = function() {
-            isFirebaseReady = true;
-            window.firebaseFunctions.onAuthStateChanged(window.firebaseAuth, (user) => {
-                if (user) {
-                    currentUserId = user.uid;
-                    loadDataFromFirebase();
-                    setupRealtimeListeners();
-                    updateFirebaseStatus('connected');
-                    showNotification('🔥 Conectado ao Firebase!', 'success');
-                }
-            });
-        };
-
-        // Update Firebase connection status
-        function updateFirebaseStatus(status) {
-            const statusElement = document.getElementById('firebase-status');
-            if (!statusElement) return;
-
-            switch(status) {
-                case 'connecting':
-                    statusElement.innerHTML = '🔄 Conectando...';
-                    statusElement.className = 'text-xs bg-yellow-500/20 text-yellow-200 px-2 py-1 rounded-full';
-                    break;
-                case 'connected':
-                    statusElement.innerHTML = '🔥 Online';
-                    statusElement.className = 'text-xs bg-green-500/20 text-green-200 px-2 py-1 rounded-full';
-                    break;
-                case 'error':
-                    statusElement.innerHTML = '⚠️ Offline';
-                    statusElement.className = 'text-xs bg-red-500/20 text-red-200 px-2 py-1 rounded-full';
-                    break;
-            }
-        }
-
-        // Save data to Firebase
-        async function saveData() {
-            // Also save to localStorage as backup
-            const data = {
-                scheduleData,
-                tasksData,
-                eventsData,
-                diaryEntries,
-                gradesData,
-                achievements,
-                chatMessages,
-                sharedContent
-            };
-            localStorage.setItem('estudoFacilData', JSON.stringify(data));
-
-            if (!isFirebaseReady || !currentUserId) return;
-
             try {
-                // Save user data to Firebase
-                const userDataRef = window.firebaseFunctions.doc(window.firebaseDb, 'users', currentUserId);
-                await window.firebaseFunctions.updateDoc(userDataRef, {
-                    userName: currentUser,
-                    scheduleData,
-                    tasksData,
-                    eventsData,
-                    diaryEntries,
-                    gradesData,
-                    achievements,
-                    lastUpdated: new Date().toISOString()
-                }).catch(async (error) => {
-                    if (error.code === 'not-found') {
-                        await window.firebaseFunctions.addDoc(window.firebaseFunctions.collection(window.firebaseDb, 'users'), {
-                            userId: currentUserId,
-                            userName: currentUser,
-                            scheduleData,
-                            tasksData,
-                            eventsData,
-                            diaryEntries,
-                            gradesData,
-                            achievements,
-                            lastUpdated: new Date().toISOString()
-                        });
-                    }
+                btn.disabled = true;
+                btn.textContent = 'Adicionando...';
+                
+                const docRef = await addDoc(collection(db, 'brands'), {
+                    name: name,
+                    icon: icon
                 });
+                
+                brandsData[docRef.id] = { id: docRef.id, name: name, icon: icon };
+                
+                document.getElementById('newBrandName').value = '';
+                document.getElementById('newBrandIcon').value = '';
+                
+                loadBrandsList();
+                updateBrandsDisplay();
+                showSuccess('Marca adicionada com sucesso!');
+                
             } catch (error) {
-                console.error('Erro ao salvar no Firebase:', error);
+                console.error('Error adding brand:', error);
+                showError('Erro ao adicionar marca. Tente novamente.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Adicionar Marca';
             }
         }
 
-        // Load data from Firebase
-        async function loadDataFromFirebase() {
-            if (!currentUserId) return;
+        async function addModel() {
+            const brandId = document.getElementById('modelBrandSelect').value;
+            const name = document.getElementById('newModelName').value.trim();
+            const modelId = document.getElementById('newModelId').value.trim().toLowerCase();
+            const btn = document.getElementById('addModelBtn');
+            
+            if (!brandId || !name || !modelId) {
+                alert('Preencha todos os campos!');
+                return;
+            }
             
             try {
-                // Load user-specific data
-                const userDataRef = window.firebaseFunctions.doc(window.firebaseDb, 'users', currentUserId);
-                const userDoc = await window.firebaseFunctions.getDocs(
-                    window.firebaseFunctions.query(
-                        window.firebaseFunctions.collection(window.firebaseDb, 'users'),
-                        window.firebaseFunctions.limit(1)
-                    )
-                );
+                btn.disabled = true;
+                btn.textContent = 'Adicionando...';
                 
-                if (!userDoc.empty) {
-                    const userData = userDoc.docs[0].data();
-                    if (userData.userId === currentUserId) {
-                        scheduleData = userData.scheduleData || {};
-                        tasksData = userData.tasksData || { urgent: [], medium: [], low: [] };
-                        eventsData = userData.eventsData || [];
-                        diaryEntries = userData.diaryEntries || [];
-                        gradesData = userData.gradesData || {};
-                        achievements = userData.achievements || [];
-                        
-                        // Update displays
-                        updateScheduleDisplay();
-                        updateScheduleStats();
-                        updateTodaySchedule();
-                        updateTasksDisplay();
-                        updateCalendar();
-                        updateDiaryDisplay();
-                        updateProgressDisplay();
-                        
-                        console.log('📊 Dados do usuário carregados do Firebase!');
+                const docRef = await addDoc(collection(db, 'models'), {
+                    brandId: brandId,
+                    name: name,
+                    modelId: modelId
+                });
+                
+                if (!modelsData[brandId]) {
+                    modelsData[brandId] = [];
+                }
+                modelsData[brandId].push({ id: docRef.id, brandId: brandId, name: name, modelId: modelId });
+                
+                document.getElementById('newModelName').value = '';
+                document.getElementById('newModelId').value = '';
+                document.getElementById('modelBrandSelect').value = '';
+                
+                loadModelsList();
+                updateBrandsDisplay();
+                showSuccess('Modelo adicionado com sucesso!');
+                
+            } catch (error) {
+                console.error('Error adding model:', error);
+                showError('Erro ao adicionar modelo. Tente novamente.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Adicionar Modelo';
+            }
+        }
+
+        async function addTone() {
+            const name = document.getElementById('newToneName').value.trim();
+            const description = document.getElementById('newToneDescription').value.trim();
+            const price = document.getElementById('newTonePrice').value.trim();
+            const btn = document.getElementById('addToneBtn');
+            
+            if (!name || !description || !price) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+            
+            try {
+                btn.disabled = true;
+                btn.textContent = 'Adicionando...';
+                
+                const docRef = await addDoc(collection(db, 'tones'), {
+                    name: name,
+                    description: description,
+                    price: price
+                });
+                
+                tonesData[docRef.id] = { id: docRef.id, name: name, description: description, price: price };
+                
+                document.getElementById('newToneName').value = '';
+                document.getElementById('newToneDescription').value = '';
+                document.getElementById('newTonePrice').value = '';
+                
+                loadTonesList();
+                showSuccess('Timbre adicionado com sucesso!');
+                
+            } catch (error) {
+                console.error('Error adding tone:', error);
+                showError('Erro ao adicionar timbre. Tente novamente.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Adicionar Timbre';
+            }
+        }
+
+        async function updateTone(toneId) {
+            const newName = document.getElementById(`tone-name-${toneId}`).value.trim();
+            const newDesc = document.getElementById(`tone-desc-${toneId}`).value.trim();
+            const newPrice = document.getElementById(`tone-price-${toneId}`).value.trim();
+            
+            if (!newName || !newDesc || !newPrice) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+            
+            try {
+                await updateDoc(doc(db, 'tones', toneId), {
+                    name: newName,
+                    description: newDesc,
+                    price: newPrice
+                });
+                
+                tonesData[toneId] = { id: toneId, name: newName, description: newDesc, price: newPrice };
+                
+                showSuccess('Timbre atualizado com sucesso!');
+                
+            } catch (error) {
+                console.error('Error updating tone:', error);
+                showError('Erro ao atualizar timbre. Tente novamente.');
+            }
+        }
+
+        async function deleteBrand(brandId) {
+            if (confirm('Tem certeza que deseja excluir esta marca e todos os seus modelos?')) {
+                try {
+                    // Delete all models of this brand first
+                    if (modelsData[brandId]) {
+                        for (const model of modelsData[brandId]) {
+                            await deleteDoc(doc(db, 'models', model.id));
+                        }
+                        delete modelsData[brandId];
                     }
-                } else {
-                    // Create initial user document
-                    await window.firebaseFunctions.addDoc(window.firebaseFunctions.collection(window.firebaseDb, 'users'), {
-                        userId: currentUserId,
-                        userName: currentUser,
-                        scheduleData: {},
-                        tasksData: { urgent: [], medium: [], low: [] },
-                        eventsData: [],
-                        diaryEntries: [],
-                        gradesData: {},
-                        achievements: [],
-                        lastUpdated: new Date().toISOString()
+                    
+                    // Delete the brand
+                    await deleteDoc(doc(db, 'brands', brandId));
+                    delete brandsData[brandId];
+                    
+                    loadBrandsList();
+                    updateBrandsDisplay();
+                    showSuccess('Marca excluída com sucesso!');
+                    
+                } catch (error) {
+                    console.error('Error deleting brand:', error);
+                    showError('Erro ao excluir marca. Tente novamente.');
+                }
+            }
+        }
+
+        async function deleteModel(modelId) {
+            if (confirm('Tem certeza que deseja excluir este modelo?')) {
+                try {
+                    await deleteDoc(doc(db, 'models', modelId));
+                    
+                    // Remove from local data
+                    Object.keys(modelsData).forEach(brandId => {
+                        modelsData[brandId] = modelsData[brandId].filter(model => model.id !== modelId);
                     });
-                    console.log('👤 Novo usuário criado no Firebase!');
+                    
+                    loadModelsList();
+                    updateBrandsDisplay();
+                    showSuccess('Modelo excluído com sucesso!');
+                    
+                } catch (error) {
+                    console.error('Error deleting model:', error);
+                    showError('Erro ao excluir modelo. Tente novamente.');
                 }
-                
-                // Load chat messages
-                loadChatMessages();
-                loadSharedContent();
-                
-            } catch (error) {
-                console.error('Erro ao carregar do Firebase:', error);
-                // Fallback to localStorage
-                loadData();
             }
         }
 
-        // Load data from localStorage (fallback)
-        function loadData() {
-            const savedData = localStorage.getItem('estudoFacilData');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                scheduleData = data.scheduleData || {};
-                tasksData = data.tasksData || { urgent: [], medium: [], low: [] };
-                eventsData = data.eventsData || [];
-                diaryEntries = data.diaryEntries || [];
-                gradesData = data.gradesData || {};
-                achievements = data.achievements || [];
-                chatMessages = data.chatMessages || [];
-                sharedContent = data.sharedContent || [];
-                
-                updateDiaryDisplay();
+        async function deleteTone(toneId) {
+            if (confirm('Tem certeza que deseja excluir este timbre?')) {
+                try {
+                    await deleteDoc(doc(db, 'tones', toneId));
+                    delete tonesData[toneId];
+                    
+                    loadTonesList();
+                    showSuccess('Timbre excluído com sucesso!');
+                    
+                } catch (error) {
+                    console.error('Error deleting tone:', error);
+                    showError('Erro ao excluir timbre. Tente novamente.');
+                }
             }
         }
 
-        // Save chat message to Firebase
-        async function saveChatMessage(message) {
-            if (!isFirebaseReady) return;
-
-            try {
-                await window.firebaseFunctions.addDoc(window.firebaseFunctions.collection(window.firebaseDb, 'chatMessages'), {
-                    ...message,
-                    timestamp: new Date().toISOString()
-                });
-            } catch (error) {
-                console.error('Erro ao salvar mensagem:', error);
-            }
-        }
-
-        // Load chat messages from Firebase
-        async function loadChatMessages() {
-            if (!isFirebaseReady) return;
-
-            try {
-                const messagesQuery = window.firebaseFunctions.query(
-                    window.firebaseFunctions.collection(window.firebaseDb, 'chatMessages'),
-                    window.firebaseFunctions.orderBy('timestamp', 'desc'),
-                    window.firebaseFunctions.limit(50)
-                );
-                
-                const querySnapshot = await window.firebaseFunctions.getDocs(messagesQuery);
-                chatMessages = [];
-                
-                querySnapshot.forEach((doc) => {
-                    chatMessages.unshift(doc.data());
-                });
-                
-                updateChatDisplay();
-            } catch (error) {
-                console.error('Erro ao carregar mensagens:', error);
-            }
-        }
-
-        // Save shared content to Firebase
-        async function saveSharedContent(content) {
-            if (!isFirebaseReady) return;
-
-            try {
-                await window.firebaseFunctions.addDoc(window.firebaseFunctions.collection(window.firebaseDb, 'sharedContent'), {
-                    ...content,
-                    timestamp: new Date().toISOString()
-                });
-            } catch (error) {
-                console.error('Erro ao salvar conteúdo compartilhado:', error);
-            }
-        }
-
-        // Load shared content from Firebase
-        async function loadSharedContent() {
-            if (!isFirebaseReady) return;
-
-            try {
-                const contentQuery = window.firebaseFunctions.query(
-                    window.firebaseFunctions.collection(window.firebaseDb, 'sharedContent'),
-                    window.firebaseFunctions.orderBy('timestamp', 'desc'),
-                    window.firebaseFunctions.limit(20)
-                );
-                
-                const querySnapshot = await window.firebaseFunctions.getDocs(contentQuery);
-                sharedContent = [];
-                
-                querySnapshot.forEach((doc) => {
-                    sharedContent.push(doc.data());
-                });
-                
-                updateSharedContentDisplay();
-            } catch (error) {
-                console.error('Erro ao carregar conteúdo compartilhado:', error);
-            }
-        }
-
-        // Setup realtime listeners for chat and shared content
-        function setupRealtimeListeners() {
-            if (!isFirebaseReady) return;
-
-            // Listen for new chat messages
-            const messagesQuery = window.firebaseFunctions.query(
-                window.firebaseFunctions.collection(window.firebaseDb, 'chatMessages'),
-                window.firebaseFunctions.orderBy('timestamp', 'desc'),
-                window.firebaseFunctions.limit(50)
-            );
-
-            window.firebaseFunctions.onSnapshot(messagesQuery, (snapshot) => {
-                chatMessages = [];
-                snapshot.forEach((doc) => {
-                    chatMessages.unshift(doc.data());
-                });
-                updateChatDisplay();
-            });
-
-            // Listen for new shared content
-            const contentQuery = window.firebaseFunctions.query(
-                window.firebaseFunctions.collection(window.firebaseDb, 'sharedContent'),
-                window.firebaseFunctions.orderBy('timestamp', 'desc'),
-                window.firebaseFunctions.limit(20)
-            );
-
-            window.firebaseFunctions.onSnapshot(contentQuery, (snapshot) => {
-                sharedContent = [];
-                snapshot.forEach((doc) => {
-                    sharedContent.push(doc.data());
-                });
-                updateSharedContentDisplay();
+        function filterContent() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const brandCards = document.querySelectorAll('.brand-card');
+            
+            brandCards.forEach(card => {
+                const brandName = card.querySelector('h3').textContent.toLowerCase();
+                if (brandName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
             });
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96583dcd408a344f',t:'MTc1MzU3ODQ2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9752792f6038bcd7',t:'MTc1NjIwMjMzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
